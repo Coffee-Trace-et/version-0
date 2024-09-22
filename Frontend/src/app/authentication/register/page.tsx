@@ -1,94 +1,107 @@
 "use client";
-import { Grid, Box, Card, Typography, Stack } from "@mui/material";
 import Link from "next/link";
+import { Grid, Box, Card, Stack, Typography } from "@mui/material";
+// components
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
 import Logo from "@/app/(DashboardLayout)/layout/shared/logo/Logo";
-import AuthRegister from "../auth/AuthRegister";
+import AuthLogin from "../auth/AuthLogin";
+import Image from "next/image";
+import { FaGoogle } from "react-icons/fa";
+import { RiFacebookCircleFill } from "react-icons/ri";
+import { TbBrandApple } from "react-icons/tb";
 
-const Register2 = () => (
-  <PageContainer title="Register" description="this is Register page">
-    <Box
-      sx={{
-        position: "relative",
-        "&:before": {
-          content: '""',
-          background: "radial-gradient(#d2f1df, #d3d7fa, #bad8f4)",
-          backgroundSize: "400% 400%",
-          animation: "gradient 15s ease infinite",
-          position: "absolute",
-          height: "100%",
-          width: "100%",
-          opacity: "0.3",
-        },
-      }}
-    >
-      <Grid
-        container
-        spacing={0}
-        justifyContent="center"
-        sx={{ height: "100vh" }}
-      >
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          lg={4}
-          xl={3}
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Card
-            elevation={9}
-            sx={{ p: 4, zIndex: 1, width: "100%", maxWidth: "500px" }}
+const Login2 = () => {
+  return (
+    <PageContainer title="Sign Up" description="this is Sign page">
+      <div className="flex items-center justify-center  min-h-screen  bg-gray-100">
+        <div className="bg-white shadow-lg rounded-lg p-6 md:flex md:space-x-10">
+          <form
+            action=""
+            className="flex flex-col space-y-4   md:w-1/2 md:mt-16"
           >
-            <Box display="flex" alignItems="center" justifyContent="center">
+            {/* <div className="mb-4 flex justify-center">
               <Logo />
-            </Box>
-            <AuthRegister
-              subtext={
-                <Typography
-                  variant="subtitle1"
-                  textAlign="center"
-                  color="textSecondary"
-                  mb={1}
-                >
-                  Your Social Campaigns
-                </Typography>
-              }
-              subtitle={
-                <Stack
-                  direction="row"
-                  justifyContent="center"
-                  spacing={1}
-                  mt={3}
-                >
-                  <Typography
-                    color="textSecondary"
-                    variant="h6"
-                    fontWeight="400"
-                  >
-                    Already have an Account?
-                  </Typography>
-                  <Typography
-                    component={Link}
-                    href="/authentication/login"
-                    fontWeight="500"
-                    sx={{
-                      textDecoration: "none",
-                      color: "primary.main",
-                    }}
-                  >
-                    Sign In
-                  </Typography>
-                </Stack>
-              }
-            />
-          </Card>
-        </Grid>
-      </Grid>
-    </Box>
-  </PageContainer>
-);
+            </div> */}
+            <div className="flex justify-center text-bold">
+              <h2 className="text-2xl  text-gray-800 font-bold">Sign Up</h2>
+            </div>
 
-export default Register2;
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="bg-gray-200 px-4 py-2 min-w-[330px] max-w-[350px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="text"
+              placeholder="Email"
+              className="bg-gray-200 px-4 py-2 min-w-[330px] max-w-[350px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              className="bg-gray-200 px-4 py-2 rounded-lg min-w-[330px] max-w-[350px] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <select className="bg-gray-200 px-4 py-2 min-w-[330px] max-w-[350px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="Farmer">Farmer</option>
+              <option value="Buyer">Buyer</option>
+              <option value="Transporter">Transporter</option>
+            </select>
+
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 max-w-[350px]"
+            >
+              Submit
+            </button>
+            <div>
+              <p className="text-center ">
+                Already have an account?&nbsp; &nbsp;
+                <Link
+                  href="/authentication/login"
+                  className="text-blue-500 hover:underline"
+                >
+                  Login
+                </Link>
+              </p>
+            </div>
+
+            <div>
+              <p className="text-center font-[calibri]">Or login with</p>
+              <div className="flex justify-center space-x-4 my-2">
+                <div className="bg-red-100 w-[76px] h-[30px] rounded-full flex justify-center items-center ">
+                  <FaGoogle className="text-red-500 " />
+                </div>
+                <div
+                  className="bg-blue-100 w-[76px] h-[30px] rounded-full flex justify-center items-center "
+                  style={{ color: "#3b5998" }}
+                >
+                  <RiFacebookCircleFill className="text-blue-500 " />
+                </div>
+                <div
+                  className="bg-[#F3F4F6] w-[76px] h-[30px] rounded-full flex justify-center items-center "
+                  style={{ color: "" }}
+                >
+                  <TbBrandApple />
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div className="hidden md:block md:w-1/2">
+            <Image
+              src="/images/auth/login.svg"
+              alt="login"
+              width={400}
+              height={400}
+              className="rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+    </PageContainer>
+  );
+};
+export default Login2;

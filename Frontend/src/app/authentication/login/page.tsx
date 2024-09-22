@@ -17,7 +17,7 @@ const Login2 = () => {
         <div className="bg-white shadow-lg rounded-lg p-6 md:flex md:space-x-10">
           <form
             action=""
-            className="flex flex-col space-y-4 md:space-y-8  md:w-1/2 md:mt-16"
+            className="flex flex-col space-y-4  md:w-1/2 md:mt-16"
           >
             {/* <div className="mb-4 flex justify-center">
               <Logo />
@@ -28,7 +28,7 @@ const Login2 = () => {
 
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Email"
               className="bg-gray-200 px-4 py-2 min-w-[330px] max-w-[350px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
@@ -63,6 +63,17 @@ const Login2 = () => {
             >
               Submit
             </button>
+            <div>
+              <p className="text-center ">
+                Don &apos; t have an account?&nbsp; &nbsp;
+                <Link
+                  href="/authentication/register"
+                  className="text-blue-500 hover:underline"
+                >
+                  Register
+                </Link>
+              </p>
+            </div>
             <div>
               <p className="text-center font-[calibri]">Or login with</p>
               <div className="flex justify-center space-x-4 my-2">
