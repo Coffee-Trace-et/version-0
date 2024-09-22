@@ -1,99 +1,71 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import {
-  Avatar,
-  Box,
-  Menu,
-  Button,
-  IconButton,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-
-import { IconListCheck, IconMail, IconUser } from "@tabler/icons-react";
+import { FaCaretDown } from "react-icons/fa";
 
 const Profile = () => {
-  const [anchorEl2, setAnchorEl2] = useState(null);
-  const handleClick2 = (event: any) => {
-    setAnchorEl2(event.currentTarget);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleToggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
   };
-  const handleClose2 = () => {
-    setAnchorEl2(null);
+
+  const handleCloseDropdown = () => {
+    setDropdownOpen(false);
   };
 
   return (
-    <Box>
-      <IconButton
-        size="large"
-        aria-label="show 11 new notifications"
-        color="inherit"
-        aria-controls="msgs-menu"
-        aria-haspopup="true"
-        sx={{
-          ...(typeof anchorEl2 === "object" && {
-            color: "primary.main",
-          }),
-        }}
-        onClick={handleClick2}
+    <div className="relative sm:w-52 h-16 border border-[#cdcdcd] rounded-full sm:rounded-lg">
+      <div
+        onClick={handleToggleDropdown}
+        className="flex items-center gap-3 cursor-pointer"
       >
-        <Avatar
+        <img
           src="/images/profile/user-1.jpg"
-          alt="image"
-          sx={{
-            width: 35,
-            height: 35,
-          }}
+          alt="User"
+          className="w-14 h-16  rounded-full sm:rounded-lg"
         />
-      </IconButton>
-      {/* ------------------------------------------- */}
-      {/* Message Dropdown */}
-      {/* ------------------------------------------- */}
-      <Menu
-        id="msgs-menu"
-        anchorEl={anchorEl2}
-        keepMounted
-        open={Boolean(anchorEl2)}
-        onClose={handleClose2}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        sx={{
-          "& .MuiMenu-paper": {
-            width: "200px",
-          },
-        }}
-      >
-        <MenuItem>
-          <ListItemIcon>
-            <IconUser width={20} />
-          </ListItemIcon>
-          <ListItemText>My Profile</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconMail width={20} />
-          </ListItemIcon>
-          <ListItemText>My Account</ListItemText>
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <IconListCheck width={20} />
-          </ListItemIcon>
-          <ListItemText>My Tasks</ListItemText>
-        </MenuItem>
-        <Box mt={1} py={1} px={2}>
-          <Button
-            href="/authentication/login"
-            variant="outlined"
-            color="primary"
-            component={Link}
-            fullWidth
-          >
-            Logout
-          </Button>
-        </Box>
-      </Menu>
-    </Box>
+        <div className=" hidden sm:flex  gap-4 py-1 items-center">
+          <div className=" flex-col items-start">
+            <div className="text-[#747C8A] text-lg font-medium">John Doe</div>
+            <div className="text-[#B4B4B4] text-lg font-medium">Farmer</div>
+          </div>
+          <FaCaretDown />
+        </div>
+      </div>
+
+      {isDropdownOpen && (
+        <div className="absolute top-16 right-0 bg-white shadow-lg rounded-lg w-48 sm:w-52 z-10">
+          <ul className="list-none p-0 m-0">
+            <li
+              className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
+              onClick={handleCloseDropdown}
+            >
+              My Profile
+            </li>
+            <li
+              className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
+              onClick={handleCloseDropdown}
+            >
+              My Account
+            </li>
+            <li
+              className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
+              onClick={handleCloseDropdown}
+            >
+              My Tasks
+            </li>
+            <li className="py-2 px-4 text-center w-full">
+              <Link
+                href="/authentication/login"
+                className="inline-block w-full py-2 px-4 border border-[#49BEFF] text-[#49BEFF] rounded-md hover:bg-[#49BEFF] hover:text-white transition"
+              >
+                Logout
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 

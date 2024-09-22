@@ -1,157 +1,178 @@
-
 import {
-    Typography, Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-    Chip
-} from '@mui/material';
-import DashboardCard from '@/app/(DashboardLayout)//components/shared/DashboardCard';
+  Typography,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Chip,
+} from "@mui/material";
+import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
+import { MdOutlineShoppingBag } from "react-icons/md";
 
 const products = [
-    {
-        id: "1",
-        name: "Sunil Joshi",
-        post: "Web Designer",
-        pname: "Elite Admin",
-        priority: "Low",
-        pbg: "primary.main",
-        budget: "3.9",
-    },
-    {
-        id: "2",
-        name: "Andrew McDownland",
-        post: "Project Manager",
-        pname: "Real Homes WP Theme",
-        priority: "Medium",
-        pbg: "secondary.main",
-        budget: "24.5",
-    },
-    {
-        id: "3",
-        name: "Christopher Jamil",
-        post: "Project Manager",
-        pname: "MedicalPro WP Theme",
-        priority: "High",
-        pbg: "error.main",
-        budget: "12.8",
-    },
-    {
-        id: "4",
-        name: "Nirav Joshi",
-        post: "Frontend Engineer",
-        pname: "Hosting Press HTML",
-        priority: "Critical",
-        pbg: "success.main",
-        budget: "2.4",
-    },
+  {
+    Type: "Yirgacheffe",
+    BuyerName: "Abebe Kebede",
+    Date: "17 May, 2024",
+    Quantity: "500 kg",
+    budget: "3.9",
+  },
+  {
+    Type: "Yirgacheffe",
+    BuyerName: "Alemitu Shakiso",
+    Date: "21 Jan,2024",
+    Quantity: "400 kg",
+    budget: "30.85",
+  },
+  {
+    Type: "Yirgacheffe",
+    BuyerName: "Mohamed Ali",
+    Date: "18 Jan,2024",
+    Quantity: "1000 kg",
+    budget: "60.00",
+  },
+  {
+    Type: "Yirgacheffe",
+    BuyerName: "Wasihun Wondimu",
+    Date: "18 Jan,2024",
+    Quantity: "1000 kg",
+    budget: "58.00",
+  },
 ];
 
-
 const ProductPerformance = () => {
-    return (
+  return (
+    <DashboardCard title="Recent Transaction">
+        <Box>
 
-        <DashboardCard title="Product Performance">
-            <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
-                <Table
-                    aria-label="simple table"
+      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
+        <Table
+          aria-label="simple table"
+          sx={{
+            whiteSpace: "nowrap",
+            mt: 2,
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Type
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Buyer Name
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Date
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Quantity
+                </Typography>
+              </TableCell>
+              <TableCell align="right">
+                <Typography variant="subtitle2" fontWeight={600}>
+                  Amount
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {products.map((product) => (
+              <TableRow key={product.BuyerName}>
+                <TableCell>
+                  <Box
                     sx={{
-                        whiteSpace: "nowrap",
-                        mt: 2
+                      display: "flex",
+                      alignItems: "center",
                     }}
-                >
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Id
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Assigned
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Name
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Priority
-                                </Typography>
-                            </TableCell>
-                            <TableCell align="right">
-                                <Typography variant="subtitle2" fontWeight={600}>
-                                    Budget
-                                </Typography>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {products.map((product) => (
-                            <TableRow key={product.name}>
-                                <TableCell>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "15px",
-                                            fontWeight: "500",
-                                        }}
-                                    >
-                                        {product.id}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                        }}
-                                    >
-                                        <Box>
-                                            <Typography variant="subtitle2" fontWeight={600}>
-                                                {product.name}
-                                            </Typography>
-                                            <Typography
+                  >
+                    <MdOutlineShoppingBag
+                      style={{ fontSize: "24px", marginRight: "8px" }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "15px",
+                        fontWeight: "500",
+                      }}
+                    >
+                      {product.Type}
+                    </Typography>
+                  </Box>
+                </TableCell>
+
+                <TableCell>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Box>
+                      <Typography variant="subtitle2" fontWeight={600}>
+                        {product.BuyerName}
+                      </Typography>
+                      {/* <Typography
                                                 color="textSecondary"
                                                 sx={{
                                                     fontSize: "13px",
                                                 }}
                                             >
                                                 {product.post}
-                                            </Typography>
-                                        </Box>
-                                    </Box>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography color="textSecondary" variant="subtitle2" fontWeight={400}>
-                                        {product.pname}
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Chip
-                                        sx={{
-                                            px: "4px",
-                                            backgroundColor: product.pbg,
-                                            color: "#fff",
-                                        }}
-                                        size="small"
-                                        label={product.priority}
-                                    ></Chip>
-                                </TableCell>
-                                <TableCell align="right">
-                                    <Typography variant="h6">${product.budget}k</Typography>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
-        </DashboardCard>
-    );
+                                            </Typography> */}
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Typography
+                    color="textSecondary"
+                    variant="subtitle2"
+                    fontWeight={400}
+                  >
+                    {product.Date}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="h6">{product.Quantity}</Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="h6">${product.budget}k</Typography>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "end",
+            justifyContent: "end",
+            marginTop: "10px",
+          }}
+        >
+          <Box
+          sx={{
+            padding: "10px 20px",
+            backgroundColor: "#49BEFF",
+            color: "white",
+            borderRadius: "10px",
+          }}
+          >
+            Load More
+          </Box>
+        </Box>
+        </Box>
+
+    </DashboardCard>
+  );
 };
 
 export default ProductPerformance;
