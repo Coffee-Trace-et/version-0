@@ -7,6 +7,18 @@ import {
   IconTypography,
   IconUserPlus,
 } from "@tabler/icons-react";
+import { BsCart3 } from "react-icons/bs";
+import { CiDeliveryTruck } from "react-icons/ci";
+import { BiCreditCard } from "react-icons/bi";
+import { FiSettings } from "react-icons/fi";
+import { LuUsers2 } from "react-icons/lu";
+import { TbLogout } from "react-icons/tb";
+// import dashboardlogo from "/images/icons/dashboardlogo.svg";
+import { FaRegUser } from "react-icons/fa";
+import { MdOutlineReportGmailerrorred } from "react-icons/md";
+import { FaPeopleCarryBox } from "react-icons/fa6";
+import { IoMdSettings } from "react-icons/io";
+import { HiMiniUsers } from "react-icons/hi2";
 
 import { uniqueId } from "lodash";
 
@@ -36,14 +48,14 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Users",
-    icon: IconLayoutDashboard,
+    icon: FaRegUser,
     href: "/Admin/Users",
   },
 
   {
     id: uniqueId(),
     title: "Reports",
-    icon: IconLayoutDashboard,
+    icon: MdOutlineReportGmailerrorred,
     href: "/Admin/Reports",
   },
 
@@ -60,25 +72,25 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Products",
-    icon: IconLayoutDashboard,
+    icon: FaPeopleCarryBox,
     href: "/Transporter/Products",
   },
   {
     id: uniqueId(),
     title: "Orders",
-    icon: IconLayoutDashboard,
+    icon: BsCart3,
     href: "/Transporter/Orders",
   },
   {
     id: uniqueId(),
     title: "Transactions",
-    icon: IconLayoutDashboard,
+    icon: BiCreditCard,
     href: "/Transporter/Transactions",
   },
   {
     id: uniqueId(),
     title: "Shipments",
-    icon: IconLayoutDashboard,
+    icon: CiDeliveryTruck,
     href: "/Transporter/Shipments",
   },
 
@@ -95,25 +107,25 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Products",
-    icon: IconLayoutDashboard,
+    icon: FaPeopleCarryBox,
     href: "/Buyer/Products",
   },
   {
     id: uniqueId(),
     title: "Orders",
-    icon: IconLayoutDashboard,
+    icon: BsCart3,
     href: "/Buyer/Orders",
   },
   {
     id: uniqueId(),
     title: "Transactions",
-    icon: IconLayoutDashboard,
+    icon: BiCreditCard,
     href: "/Buyer/Transactions",
   },
   {
     id: uniqueId(),
     title: "Shipments",
-    icon: IconLayoutDashboard,
+    icon: CiDeliveryTruck,
     href: "/Buyer/Shipments",
   },
   {
@@ -129,25 +141,25 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Products",
-    icon: IconLayoutDashboard,
+    icon: FaPeopleCarryBox,
     href: "/farmer/Products",
   },
   {
     id: uniqueId(),
     title: "Orders",
-    icon: IconLayoutDashboard,
+    icon: BsCart3,
     href: "/farmer/Orders",
   },
   {
     id: uniqueId(),
     title: "Transactions",
-    icon: IconLayoutDashboard,
+    icon: BiCreditCard,
     href: "/farmer/Transactions",
   },
   {
     id: uniqueId(),
     title: "Shipments",
-    icon: IconLayoutDashboard,
+    icon: CiDeliveryTruck,
     href: "/farmer/Shipments",
   },
 
@@ -158,14 +170,14 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: "Community",
-    icon: IconLayoutDashboard,
+    icon: HiMiniUsers,
     href: "/Community",
   },
 
   {
     id: uniqueId(),
     title: "Settings",
-    icon: IconLayoutDashboard,
+    icon: IoMdSettings,
     href: "/Settings",
   },
 
@@ -192,7 +204,6 @@ const Menuitems = [
     icon: IconCopy,
     href: "/utilities/shadow",
   },
-
   {
     id: uniqueId(),
     title: "Teklu",
