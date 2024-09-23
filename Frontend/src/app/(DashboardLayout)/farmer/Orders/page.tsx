@@ -1,10 +1,12 @@
 import React from "react";
+import PendingOrder from "../../components/Orders/pendingOrder";
+import ApporedOrder from "../../components/Orders/aprovedOrder";
 
 const page = () => {
   return (
-    <div>
-      <h1>Orders Page</h1>
-      <p>Orders are listed here</p>
+    <div className="flex flex-col gap-8">
+      <PendingOrder />
+      <ApporedOrder />
     </div>
   );
 };
