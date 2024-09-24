@@ -23,13 +23,9 @@ func NewProductRouter(route *gin.RouterGroup, config *config.Config, DB mongo.Da
 	}
 
 
-	route.POST("/products", productHandler.CreateProduct)
-	// order the current product
-	// route.GET("/products", productHandler.GetAllProduct)
-	// route.GET("/products/:id", productHandler.GetProductByID)
-	// route.DELETE("/products/:id", productHandler.DeleteProduct)
-	// route.PUT("/products/:id", productHandler.UpdateProduct)
-
-	// filter products by category
-
+	product := route.Group("/product")
+	{
+		product.POST("/create", productHandler.CreateProduct)
+		product.GET("/getall", productHandler.GetAllProduct)
+	}
 }
