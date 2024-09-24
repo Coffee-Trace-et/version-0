@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/joho/godotenv"
-	
 )
 
 type Config struct {
@@ -22,6 +21,8 @@ type Config struct {
 	AccessTokenSecret        string
 	RefreshTokenSecret       string
 	NotificationCollection   string
+	ReplyCollection		  	string
+	BlogCollection			string
 }
 
 func LoadEnv() (*Config, error) {
@@ -39,6 +40,8 @@ func LoadEnv() (*Config, error) {
 	productColl := os.Getenv("product_collection")
 	contextTimeoutStr := os.Getenv("CONTEXT_TIMEOUT")
 	notifycoll := os.Getenv("notification_collection")
+	replycoll := os.Getenv("reply_collection")
+	blogcoll := os.Getenv("blog_collection")
 	accessTokenExpiryHourStr := os.Getenv("ACCESS_TOKEN_EXPIRY_HOUR")
 	refreshTokenExpiryHourStr := os.Getenv("REFRESH_TOKEN_EXPIRY_HOUR")
 	accessTokenSecret := os.Getenv("ACCESS_TOKEN_SECRET")
@@ -81,6 +84,8 @@ func LoadEnv() (*Config, error) {
 		AccessTokenSecret:      accessTokenSecret,
 		RefreshTokenSecret:     refreshTokenSecret,
 		NotificationCollection: notifycoll,
+		ReplyCollection:		replycoll,
+		BlogCollection:			blogcoll,
 	}
 
 	return config, nil
