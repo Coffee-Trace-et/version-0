@@ -25,6 +25,8 @@ type Config struct {
 
 
 	TransactionCollection string
+	ReplyCollection		  	string
+	BlogCollection			string
 }
 
 func LoadEnv() (*Config, error) {
@@ -42,6 +44,8 @@ func LoadEnv() (*Config, error) {
 	productColl := os.Getenv("product_collection")
 	contextTimeoutStr := os.Getenv("CONTEXT_TIMEOUT")
 	notifycoll := os.Getenv("notification_collection")
+	replycoll := os.Getenv("reply_collection")
+	blogcoll := os.Getenv("blog_collection")
 	accessTokenExpiryHourStr := os.Getenv("ACCESS_TOKEN_EXPIRY_HOUR")
 	refreshTokenExpiryHourStr := os.Getenv("REFRESH_TOKEN_EXPIRY_HOUR")
 	accessTokenSecret := os.Getenv("ACCESS_TOKEN_SECRET")
@@ -87,6 +91,8 @@ func LoadEnv() (*Config, error) {
 		NotificationCollection: notifycoll,
 
 		TransactionCollection: transcoll,
+		ReplyCollection:		replycoll,
+		BlogCollection:			blogcoll,
 	}
 
 	return config, nil
