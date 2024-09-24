@@ -23,7 +23,7 @@ func NewProductUseCase(prodrepo domain.ProductRepository, timeout time.Duration)
 
 // create product implmentation
 
-func (uc *ProductUseCase) CreateProduct(userID string , product domain.Product) interface{} { 
+func (uc *ProductUseCase) CreateProduct(userID string , product domain.Product) (domain.SuccessResponse, domain.ErrorResponse) { 
 	
 	ctx, cancel := context.WithTimeout(context.Background(), uc.contextTimeout)
 	defer cancel()
@@ -31,17 +31,25 @@ func (uc *ProductUseCase) CreateProduct(userID string , product domain.Product) 
 	product.ID = primitive.NewObjectID()
 	product.CreatedAt = time.Now()
 	product.UpdatedAt = time.Now()
-	product.Status = "active"
+	// product.Status = "active"
 	product.FarmerID = userID
 
 	_ , err := uc.ProductRepository.CreateProduct(ctx, product)
 
 	if err != nil {
-		return domain.ErrorResponse{Message: "Failed to create product", Status: 400}
+		return domain.SuccessResponse{},domain.ErrorResponse{Message: "Failed to create product", Status: 400}
 	}
 
-	return domain.SuccessResponse{Message: "Product created successfully", Status: 200}
+	return domain.SuccessResponse{Message: "Product created successfully", Status: 200}, domain.ErrorResponse{}
 }
 
 
 
+
+// get all product implementation
+
+func (uc *ProductUseCase) GetAllProduct(name, limit , page  string) ([]domain.Product, error) {
+	
+
+	return uc.ProductRepository.GetAllProduct(name, limit, page)
+}

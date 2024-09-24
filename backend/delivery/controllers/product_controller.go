@@ -23,8 +23,37 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	result := pc.ProductUsecase.CreateProduct(userID, product)
+	suss, err := pc.ProductUsecase.CreateProduct(userID, product)
 
-	HandleResponse(c, result)
+	if err.Message != "" {
+		c.JSON(err.Status, gin.H{"error": err.Message})
+		return
+	}
+		
+	c.JSON(suss.Status, gin.H{"message": suss.Message})
 }
 
+
+// get all product
+func (pc *ProductController) GetAllProduct(c *gin.Context) {
+	limiter := c.Query("limit")
+	page := c.Query("page")
+	name := c.Query("name")
+
+	if limiter == "" {
+		limiter = "10"
+	}
+
+	if page == "" {
+		page = "1"
+	}
+	
+	products, err := pc.ProductUsecase.GetAllProduct(name, limiter, page)
+
+	if err != nil {
+		c.JSON(400, gin.H{"error":"Failed to get all products"})
+		return
+	}
+
+	c.JSON(200, gin.H{"products": products})
+}

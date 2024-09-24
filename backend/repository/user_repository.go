@@ -21,89 +21,69 @@ func NewUserRepository(database mongo.Database, collection string) domain.UserRe
 
 }
 
-func (r *userRepository) CreateUser(ctx context.Context , user domain.User) (error) {
-	// use mongo driver to insert user to database	
+func (ur *userRepository) CreateAccount(user domain.User) (domain.User, error) {
+	ctx := context.Background()
+	user.ID = primitive.NewObjectID()
 
-	collection := r.database.Collection(r.collection)
-	_, err := collection.InsertOne(ctx, user)
-
+	_, err := ur.database.Collection(ur.collection).InsertOne(ctx, user)
 	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-
-func (r *userRepository) GetAllUser(ctx context.Context) ([]domain.User, error) {
-
-	collection := r.database.Collection(r.collection)
-	cursor, err := collection.Find(ctx, bson.D{})
-	if err != nil {
-		return nil, err
-	}
-
-	var users []domain.User
-	if err = cursor.All(ctx, &users); err != nil {
-		return nil, err
-	}
-
-	return users, nil
-	
-}
-
-func (r *userRepository) GetUserByID(ctx context.Context , id string) (domain.User, error) {
-	// tmplment the logic to get user by id from the database
-
-	newid , err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return domain.User{} , err
-	}
-
-	collection := r.database.Collection(r.collection)
-	filter := bson.M{"_id": newid}
-
-	var user domain.User
-	err = collection.FindOne(ctx, filter).Decode(&user)
-
-	if err != nil {
-		return domain.User{} , err
+		return domain.User{}, err
 	}
 
 	return user, nil
-
 }
 
-// find by email
+func (ur *userRepository) Login(user domain.User) (domain.User, error) {
+	ctx := context.Background()
 
-func (r *userRepository) FindUserByEmail(ctx context.Context, email string) (domain.User, error) {
-	collection := r.database.Collection(r.collection)
+	filter := bson.M{"email": user.Email}
+	err := ur.database.Collection(ur.collection).FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return user, nil
+}
+
+func (ur *userRepository) GetAllUserByEmial(email string) (domain.User, error) {
+	ctx := context.Background()
+	var user domain.User
+
 	filter := bson.M{"email": email}
-
-	var user domain.User
-	err := collection.FindOne(ctx, filter).Decode(&user)
-
+	err := ur.database.Collection(ur.collection).FindOne(ctx, filter).Decode(&user)
 	if err != nil {
-		return domain.User{} , err
+		return domain.User{}, err
 	}
 
 	return user, nil
 }
 
 
-// func (r *userRepository) UpdateUser(ctx context.Context , id string, user domain.User) (domain.User, error) {
-// 	return domain.User{}, nil
-// }
+func (ur *userRepository) GetByID(id string) (domain.User, error) {
+	ctx := context.Background()
+	var user domain.User
 
-// func (r *userRepository) DeleteUser(ctx context.Context , id string) (domain.User, error) {
-// 	return domain.User{}, nil
-// }
+	objectID, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": objectID}
+	err := ur.database.Collection(ur.collection).FindOne(ctx, filter).Decode(&user)
+	if err != nil {
+		return domain.User{}, err
+	}
 
-// func (r *userRepository) Login(ctx context.Context , user domain.UserLogin) (domain.User, error) {
-// 	return domain.User{}, nil
-// }
+	return user, nil
+}
 
-// func (r *userRepository) FindUserByEmail(ctx context.Context, email string) (domain.User, error) {
-// 	return domain.User{}, nil
-// }
+func (ur *userRepository) UpdateProfile(id string, user domain.User) (domain.User, error) {
+	ctx := context.Background()
 
+	objectID, _ := primitive.ObjectIDFromHex(id)
+	filter := bson.M{"_id": objectID}
+	update := bson.M{"$set": user}
+
+	_, err := ur.database.Collection(ur.collection).UpdateOne(ctx, filter, update)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return user, nil
+}	
