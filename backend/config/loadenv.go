@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/joho/godotenv"
-	
 )
 
 type Config struct {
@@ -22,6 +21,10 @@ type Config struct {
 	AccessTokenSecret        string
 	RefreshTokenSecret       string
 	NotificationCollection   string
+
+
+
+	TransactionCollection string
 }
 
 func LoadEnv() (*Config, error) {
@@ -43,6 +46,7 @@ func LoadEnv() (*Config, error) {
 	refreshTokenExpiryHourStr := os.Getenv("REFRESH_TOKEN_EXPIRY_HOUR")
 	accessTokenSecret := os.Getenv("ACCESS_TOKEN_SECRET")
 	refreshTokenSecret := os.Getenv("REFRESH_TOKEN_SECRET")
+	transcoll := os.Getenv("transaction_collection")
 	port, err := strconv.Atoi(portStr)
 
 	if err != nil {
@@ -81,6 +85,8 @@ func LoadEnv() (*Config, error) {
 		AccessTokenSecret:      accessTokenSecret,
 		RefreshTokenSecret:     refreshTokenSecret,
 		NotificationCollection: notifycoll,
+
+		TransactionCollection: transcoll,
 	}
 
 	return config, nil

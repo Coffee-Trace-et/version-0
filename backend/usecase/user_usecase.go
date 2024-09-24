@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"coeffee/domain"
+	"strings"
 	"time"
 )
 
@@ -29,6 +30,8 @@ func (uc *UserUseCase) CreateAccount(user domain.User) (domain.User, domain.Erro
 	if check.Email != "" {
 		return domain.User{}, domain.ErrorResponse{Message: "Email already exist", Status: 400}
 	}
+
+	user.Role = strings.ToLower(user.Role)
 
 	hashedPassword, err := uc.PasswordSvc.HashPassword(user.Password)
 	if err != nil {
