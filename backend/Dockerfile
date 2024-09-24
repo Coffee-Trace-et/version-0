@@ -1,37 +1,26 @@
-# Dockerfile
+# Start from the latest golang base image
+FROM golang:latest
 
-# Stage 1: Build the Go application
-FROM golang:
+# Add Maintainer Info
+LABEL maintainer="coffee Trace"
 
-# Set the working directory inside the container
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Copy go.mod and go.sum files first to leverage Docker's caching mechanism
+# Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Download dependencies
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy the rest of the application source code
+# Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
-# Build the Go application (assuming the entry point is cmd/main.go)
-RUN go build -o /app/main ./cmd
+# Build the Go app
+RUN go build -o main ./cmd/main.go
 
-# Stage 2: Create the final minimal image to run the app
-FROM alpine:latest
-
-# Set up working directory in the final image
-WORKDIR /root/
-
-# Copy the binary from the builder stage
-COPY --from=builder /app/main .
-
-# Copy .env file into the container
-COPY .env .env
-
-# Expose the application's port
+# Expose port 8080 to the outside world
 EXPOSE 8080
 
-# Run the application
+# Command to run the executable
 CMD ["./main"]
