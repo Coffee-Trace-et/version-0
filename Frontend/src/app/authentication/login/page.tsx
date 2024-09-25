@@ -13,33 +13,57 @@ const Login2 = () => {
     password: "",
     role: "Farmer", // default role
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+    setErrorMessage(""); // Reset error message
+
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      setErrorMessage("Email and password are required.");
+      return;
+    }
+
     try {
-      const response = await fetch("https://cofeetracebackend-2.onrender.com/api/v0/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://cofeetracebackend-2.onrender.com/api/v0/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
         console.log("Login successful:", data);
-        // Handle successful login (store token, navigate to dashboard, etc.)
+
+        // Ensure you access the data correctly
+        const { access_token, user_data } = data.data; // Accessing nested data
+
+        // Store access token and user data in local storage
+        localStorage.setItem("token", access_token);
+        localStorage.setItem("userData", JSON.stringify(user_data));
+
+        // Redirect to the dashboard or another page
+        // window.location.href = '/dashboard';
       } else {
-        console.error("Login failed:", response.statusText);
+        const errorData = await response.json();
+        setErrorMessage(errorData.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Error during login request:", error);
+      setErrorMessage("An error occurred. Please try again later.");
     }
   };
 
@@ -47,10 +71,16 @@ const Login2 = () => {
     <PageContainer title="Login" description="this is Login page">
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="bg-white shadow-lg rounded-lg p-6 md:flex md:space-x-10">
-          <form onSubmit={handleSubmit} className="flex flex-col space-y-4 md:w-1/2 md:mt-16">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col space-y-4 md:w-1/2 md:mt-16"
+          >
             <div className="flex justify-center text-bold">
               <h2 className="text-2xl text-gray-800 font-bold">Login</h2>
             </div>
+            {errorMessage && (
+              <div className="text-red-500 text-center">{errorMessage}</div>
+            )}
             <input
               type="email"
               name="email"
@@ -85,7 +115,10 @@ const Login2 = () => {
                 <input type="checkbox" className="mr-2" />
                 <span>Remember me</span>
               </div>
-              <Link href="/auth/forgot-password" className="text-blue-500 hover:underline">
+              <Link
+                href="/auth/forgot-password"
+                className="text-blue-500 hover:underline"
+              >
                 Forgot Password?
               </Link>
             </div>
@@ -100,7 +133,10 @@ const Login2 = () => {
             <div>
               <p className="text-center ">
                 Don&apos;t have an account?&nbsp;&nbsp;
-                <Link href="/authentication/register" className="text-blue-500 hover:underline">
+                <Link
+                  href="/authentication/register"
+                  className="text-blue-500 hover:underline"
+                >
                   Register
                 </Link>
               </p>
