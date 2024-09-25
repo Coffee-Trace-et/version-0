@@ -26,7 +26,7 @@ WORKDIR /app
 COPY --from=builder /app/main .
 
 # Copy .env and other necessary files such as config
-COPY .env .env
+# COPY .env .env
 # COPY config ./config
 
 # Expose the port your app runs on
