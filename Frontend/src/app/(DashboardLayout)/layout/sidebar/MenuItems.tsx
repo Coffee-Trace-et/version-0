@@ -44,12 +44,14 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Admin/Dashboard",
+    role: "admin",
   },
   {
     id: uniqueId(),
     title: "Users",
     icon: FaRegUser,
     href: "/Admin/Users",
+    role: "admin",
   },
 
   {
@@ -57,6 +59,7 @@ const Menuitems = [
     title: "Reports",
     icon: MdOutlineReportGmailerrorred,
     href: "/Admin/Reports",
+    role: "admin",
   },
 
   {
@@ -68,30 +71,35 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Transporter/Dashboard",
+    role: "driver",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/Transporter/Products",
+    role: "driver",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/Transporter/Orders",
+    role: "driver",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/Transporter/Transactions",
+    role: "driver",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/Transporter/Shipments",
+    role: "driver",
   },
 
   {
@@ -103,30 +111,35 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Buyer/Dashboard",
+    role: "merchant",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/Buyer/Products",
+    role: "merchant",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/Buyer/Orders",
+    role: "merchant",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/Buyer/Transactions",
+    role: "merchant",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/Buyer/Shipments",
+    role: "merchant",
   },
   {
     navlabel: true,
@@ -137,30 +150,35 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/farmer/Dashboard",
+    role: "farmer",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/farmer/Products",
+    role: "farmer",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/farmer/Orders",
+    role: "farmer",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/farmer/Transactions",
+    role: "farmer",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/farmer/Shipments",
+    role: "farmer",
   },
 
   {
@@ -172,6 +190,7 @@ const Menuitems = [
     title: "Community",
     icon: HiMiniUsers,
     href: "/Community",
+    role: "all",
   },
 
   {
@@ -179,6 +198,7 @@ const Menuitems = [
     title: "Settings",
     icon: IoMdSettings,
     href: "/Settings",
+    role: "all",
   },
 
   {
@@ -186,6 +206,7 @@ const Menuitems = [
     title: "Logout",
     icon: IconLogin,
     href: "/authentication/login",
+    role: "all",
   },
 
   {
@@ -219,12 +240,14 @@ const Menuitems = [
     title: "Login",
     icon: IconLogin,
     href: "/authentication/login",
+    role: "",
   },
   {
     id: uniqueId(),
     title: "Register",
     icon: IconUserPlus,
     href: "/authentication/register",
+    role: "",
   },
   {
     navlabel: true,

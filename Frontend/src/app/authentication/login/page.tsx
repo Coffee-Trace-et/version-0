@@ -57,6 +57,23 @@ const Login2 = () => {
 
         // Redirect to the dashboard or another page
         // window.location.href = '/dashboard';
+        switch (user_data.role) {
+          case "farmer":
+            window.location.href = "/farmer/Dashboard";
+            break;
+          case "merchant":
+            window.location.href = "/Buyer/Dashboard";
+            break;
+          case "driver":
+            window.location.href = "/Transporter/Dashboard";
+            break;
+          case "admin":
+            window.location.href = "/Admin/Dashboard";
+            break;
+          default:
+            window.location.href = "/dashboard";
+            break;
+        }
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message || "Login failed. Please try again.");

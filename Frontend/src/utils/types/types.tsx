@@ -16,4 +16,11 @@ interface Destination {
 interface RecentTransactionsProps {
   destinations: Destination[];
 }
-export type { Destination, RecentTransactionsProps };
+
+interface UserData {
+  name: string;
+  email: string;
+  role: string;
+}
+
+export type { Destination, RecentTransactionsProps, UserData };
