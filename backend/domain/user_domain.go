@@ -78,12 +78,8 @@ type UserUseCase interface {
 	GetByID(id string) (User, ErrorResponse)
 
 	UpdateProfile(id string, user User) (User, ErrorResponse)
-
-
-
-
-
 }
+
 
 type UserRepository interface {
 
