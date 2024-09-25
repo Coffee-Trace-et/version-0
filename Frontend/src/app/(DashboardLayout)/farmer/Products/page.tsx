@@ -13,6 +13,37 @@ const page = () => {
   const [rating, setRating] = useState<number | null>(2);
   const [open, setOpen] = useState<boolean>(false);
 
+  const card = [
+    {
+      image: "",
+      name: "Yetelekeme Yirgachefe Buna",
+      price: "$2000",
+      amount: "50 kg",
+      rating: "4.3",
+    },
+    {
+      image: "",
+      name: "Yetelekeme Yirgachefe Buna",
+      price: "$2000",
+      amount: "50 kg",
+      rating: "4.3",
+    },
+    {
+      image: "",
+      name: "Yetelekeme Yirgachefe Buna",
+      price: "$2000",
+      amount: "50 kg",
+      rating: "4.3",
+    },
+    {
+      image: "",
+      name: "Yetelekeme Yirgachefe Buna",
+      price: "$2000",
+      amount: "50 kg",
+      rating: "4.3",
+    },
+  ];
+
   const handleAddProduct = () => {
     setOpen(!open);
   };
@@ -139,7 +170,7 @@ const page = () => {
           </div>
         </div>
         {open && (
-          <div className="fixed inset-0 z-10  flex items-center justify-center bg-[#00000057] ">
+          <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
             <div
               className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
               onClick={handleCloseAddProduct}
@@ -149,7 +180,13 @@ const page = () => {
             <AddProduct />
           </div>
         )}
-        <ProductCard />
+        <div className="flex gap-5 flex-wrap justify-center  sm:justify-between  overflow-y-auto">
+          {card.map((product, index) => (
+            <div className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer">
+              <ProductCard key={index} {...product} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from "react"
 
 const AddProduct = () =>{
     return(
-        <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 border-2">
+        <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 border-2 rounded-xl">
               <div className="flex flex-col gap-2">
               <label htmlFor="">Product Name</label>
               <input
@@ -40,11 +40,11 @@ const AddProduct = () =>{
             </div>
             
             </div>
-            <div className="flex justify-center gap-2 mt-4">
+            <div className="flex  gap-2 mt-4">
               <input
                 type="sumbit"
                 value={"Add Product"}
-                className="p-4 border-2 border-gray-200 rounded-md outline-none text-center "
+                className="w-full p-4 border-2 bg-[#A67B5B] text-white border-gray-200 rounded-md outline-none text-center "
               />
             </div>
         </div>
