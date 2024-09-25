@@ -36,12 +36,14 @@ const Profile = () => {
       {isDropdownOpen && (
         <div className="absolute top-16 right-0 bg-white shadow-lg rounded-lg w-48 sm:w-52 z-10">
           <ul className="list-none p-0 m-0">
+            <Link href={'/message'}>
             <li
               className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
               onClick={handleCloseDropdown}
-            >
-              My Profile
+              >
+              My Message
             </li>
+              </Link>
             <li
               className="py-2 px-4 hover:bg-gray-100 cursor-pointer border-b border-gray-200"
               onClick={handleCloseDropdown}

@@ -1,12 +1,16 @@
-import React from "react";
+"use client";
+import RecentTransactions from "../../components/Transaction/recentTransactions";
+import Cards from "../../components/Transaction/transactionCards";
 
-const page = () => {
+const Transactions = () => {
   return (
-    <div>
-      <h1>Transactions Page</h1>
-      <p>Transactions are listed here</p>
-    </div>
+    <>
+      <div className="flex flex-col gap-8">
+        <Cards />
+        <RecentTransactions />
+      </div>
+    </>
   );
 };
 
-export default page;
+export default Transactions;
