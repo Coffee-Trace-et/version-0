@@ -1,41 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import CoffeeImage from "@/../../public/images/products/coffeeNo1.svg";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
+import { RiCloseLine } from "react-icons/ri";
+import AddProduct from "./addProduct";
 
-const Product = () => {
-  const card = [
-    {
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },{
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },{
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },{
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },
-  ];
+interface ProductCardType {
+  image: string;
+  name: string;
+  price: string;
+  amount: string;
+  rating: string;
+}
+
+const Product = ({...item}:ProductCardType) => {
 
   return (
-    <div className="flex gap-5 flex-wrap justify-center  sm:justify-between  overflow-y-auto">
-      {card.map((item, index) => (
-        <div className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2">
+        <div className="w-full">
           <Image
             src={CoffeeImage}
             alt="Coffee image"
@@ -58,8 +39,6 @@ const Product = () => {
             </div>
           </div>
         </div>
-      ))}
-    </div>
   );
 };
 

@@ -193,7 +193,7 @@ const Page = () => {
           />
         </div>
 
-        <div className="flex flex-col gap-5 overflow-y-scroll flex-grow">
+        <div className="flex flex-col gap-5 overflow-y-scroll  border-r-2 flex-grow">
           {chats.map((chat, index) => (
             <div
               key={index}
