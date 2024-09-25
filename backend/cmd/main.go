@@ -5,6 +5,7 @@ import (
 	"coeffee/delivery/routers"
 	"fmt"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,6 +13,12 @@ import (
 func main() {
 
 	server := gin.Default()
+
+	server.Use(cors.New(cors.Config{
+        AllowAllOrigins: true,
+        AllowMethods:    []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowHeaders:    []string{"Origin", "Content-Type", "Authorization"},
+    }))
 
 	
 	env, err := config.LoadEnv()

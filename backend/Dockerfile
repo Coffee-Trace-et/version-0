@@ -1,26 +1,36 @@
-# Start from the latest golang base image
-FROM golang:latest
+# Stage 1: Build Stage
+FROM golang:1.20-alpine AS builder
 
-# Add Maintainer Info
-LABEL maintainer="coffee Trace"
-
-# Set the Current Working Directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go mod and sum files
+# Copy the Go Modules files
 COPY go.mod go.sum ./
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files haven't changed.
 RUN go mod download
 
-# Copy the source from the current directory to the Working Directory inside the container
+# Copy the rest of the application code
 COPY . .
 
 # Build the Go app
-RUN go build -o main ./cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main ./cmd/main.go
 
-# Expose port 8080 to the outside world
-EXPOSE 8080
+# Stage 2: Run Stage
+FROM alpine:3.18
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy the pre-built binary from the builder stage
+COPY --from=builder /app/main .
+
+# Copy .env and other necessary files such as config
+COPY .env .env
+COPY config ./config
+
+# Expose the port your app runs on
+EXPOSE 4000
 
 # Command to run the executable
 CMD ["./main"]
