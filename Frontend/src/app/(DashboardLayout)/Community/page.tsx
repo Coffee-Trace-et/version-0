@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LuMessageSquare } from "react-icons/lu";
 import { FaPaperclip, FaEye } from "react-icons/fa";
 import { AiOutlineMessage } from "react-icons/ai";
@@ -7,15 +7,41 @@ import User from "@/../../public/images/profile/user-1.jpg";
 import Image from "next/image";
 import { RiCloseLine } from "react-icons/ri";
 import AddBlog from "../components/community/AddBlog";
+import { useSession } from "next-auth/react";
+import { BiSend } from "react-icons/bi";
+import ItemReplay from "../components/community/replay";
 
 interface Discription {
   description: string;
+}
+// interface Replay {
+//   id: string;
+//   user_id: string;
+//   name: string;
+//   image: string;
+//   reply: string;
+//   blog_id: string;
+//   created_at: string;
+// }
+
+// interface ItemsReplay {
+//   id: string;
+// }
+
+interface Blog {
+  id: string;
+  user_id: string;
+  name: string;
+  image: string;
+  title: string;
+  description: string;
+  tags: [tag: string];
+  created_at: string;
 }
 
 const ItemDescription = ({ description }: Discription) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const toggleExpanded = () => setIsExpanded(!isExpanded);
-
   const charLimit = 200;
 
   return (
@@ -30,9 +56,123 @@ const ItemDescription = ({ description }: Discription) => {
   );
 };
 
+// const ItemReplay = ({ id }: ItemsReplay) => {
+//   const session = useSession();
+//   const [isExpanded, setIsExpanded] = useState(true);
+//   const [replay, setReplay] = useState<Replay[]>();
+//   const [replayValue, setReplayValue] = useState<string>();
+//   const toggleExpanded = () => setIsExpanded(!isExpanded);
+
+//   const postReplay = async() =>{
+//     try {
+//       const response = await fetch(
+//         `https://cofeetracebackend-2.onrender.com/api/v0/forum/${id}/getReply`,
+//         {
+//           method: "GET",
+//           headers: {
+//             "Content-Type": "application/json",
+//             Authorization: `Bearer ${session?.data?.accessToken}`,
+//           },
+//         }
+//       );
+//       // const data = await response.json();
+//       if (response.ok) {
+//         console.log("post replay response",response)
+//       }
+//     } catch (error) {
+//       console.error("Error fetching products:", error);
+//     }
+//   }
+
+//   useEffect(() => {
+//     const fetchReplays = async () => {
+//       try {
+//         const response = await fetch(
+//           `https://cofeetracebackend-2.onrender.com/api/v0/forum/${id}/getReply`,
+//           {
+//             method: "GET",
+//             headers: {
+//               "Content-Type": "application/json",
+//               Authorization: `Bearer ${session?.data?.accessToken}`,
+//             },
+//             body:JSON.stringify(replayValue)
+//           }
+//         );
+//         const data = await response.json();
+//         if (response.ok) {
+//           setReplay(data.replies);
+//         }
+//       } catch (error) {
+//         console.error("Error fetching products:", error);
+//       }
+//     };
+
+//     fetchReplays();
+//   }, []);
+
+//   return (
+//     <>
+//       {isExpanded ? (
+//         <div
+//           className="flex gap-3 items-center hover:text-blue-500"
+//           onClick={toggleExpanded}
+//         >
+//           <AiOutlineMessage />
+//           <p>{replay?.length} replies</p>
+//         </div>
+//       ) : (
+//         <div>
+//           <div
+//             className="flex gap-3 items-center mb-5 hover:text-blue-500"
+//             onClick={toggleExpanded}
+//           >
+//             <AiOutlineMessage />
+//             <p>{replay?.length} replies</p>
+//           </div>
+
+//           {replay?.map((replays, index) => (
+//             <div className="flex justify-between items-center">
+//               <div className="flex items-center gap-5">
+//                 <Image
+//                   src={replays?.image}
+//                   alt={replays.name}
+//                   width={48}
+//                   height={48}
+//                   className="rounded-full bg-violet-50"
+//                 />
+//                 <div className="flex flex-col gap-2">
+//                   <p>{replays.name}</p>
+//                   <p>{replays.reply}</p>
+//                 </div>
+//               </div>
+//               <p>{new Date(replays.created_at).toDateString()}</p>
+//             </div>
+//           ))}
+
+//           <div className="flex gap-2">
+//             <div className="w-full flex gap-3 items-center px-3 py-1 border-2 rounded-full sticky bottom-0 bg-white">
+//               <input
+//                 type="text"
+//                 placeholder="Enter replay"
+//                 className="w-full focus:outline-none rounded-md focus:border-blue-500"
+//                 onChange={(e) => setReplayValue(e.target.value)}
+//               />
+//               <button className="text-3xl font-bold text-blue-500 cursor-pointer" type="submit" onClick={postReplay}>
+//                 <BiSend className="text-3xl font-bold text-blue-500 cursor-pointer" />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </>
+//   );
+// };
+
 const page = () => {
   const [activeTab, setActiveTab] = useState("discussion");
   const [open, setOpen] = useState<boolean>(false);
+  const [blog, setBlog] = useState<Blog[]>();
+  const session = useSession();
 
   const handleAddPost = () => {
     setOpen(!open);
@@ -56,48 +196,6 @@ const page = () => {
     },
   ];
 
-  const blog = [
-    {
-      author: {
-        name: "Abebe Kebede",
-        image: "image url",
-      },
-      title: "How to Improve coffee production",
-      discription:
-        "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-      tags: ["coffee improvment", "Study-Group"],
-      replies: "28",
-      views: "875",
-      createdAt: "2 day ago",
-    },
-    {
-      author: {
-        name: "Abebe Kebede",
-        image: "image url",
-      },
-      title: "How to Improve coffee production",
-      discription:
-        "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-      tags: ["coffee improvment", "Study-Group"],
-      replies: "28",
-      views: "875",
-      createdAt: "2 day ago",
-    },
-    {
-      author: {
-        name: "Abebe Kebede",
-        image: "image url",
-      },
-      title: "How to Improve coffee production",
-      discription:
-        "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-      tags: ["coffee improvment", "Study-Group"],
-      replies: "28",
-      views: "875",
-      createdAt: "2 day ago",
-    },
-  ];
-
   const sugestion = [
     {
       tag: "Coffee",
@@ -109,6 +207,69 @@ const page = () => {
       tag: "System-update",
     },
   ];
+  // const blog = [
+  //   {
+  //     author: {
+  //       name: "Abebe Kebede",
+  //       image: "image url",
+  //     },
+  //     title: "How to Improve coffee production",
+  //     discription:
+  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
+  //     tags: ["coffee improvment", "Study-Group"],
+  //     replies: "28",
+  //     createdAt: "2 day ago",
+  //   },
+  //   {
+  //     author: {
+  //       name: "Abebe Kebede",
+  //       image: "image url",
+  //     },
+  //     title: "How to Improve coffee production",
+  //     discription:
+  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
+  //     tags: ["coffee improvment", "Study-Group"],
+  //     replies: "28",
+  //     views: "875",
+  //     createdAt: "2 day ago",
+  //   },
+  //   {
+  //     author: {
+  //       name: "Abebe Kebede",
+  //       image: "image url",
+  //     },
+  //     title: "How to Improve coffee production",
+  //     discription:
+  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
+  //     tags: ["coffee improvment", "Study-Group"],
+  //     replies: "28",
+  //     views: "875",
+  //     createdAt: "2 day ago",
+  //   },
+  // ];
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch(
+          "https://cofeetracebackend-2.onrender.com/api/v0/forum/getAllBlog",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${session?.data?.accessToken}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setBlog(data.blogs);
+        console.log("i was here", response);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
 
   return (
     <div className="flex justify-between">
@@ -125,17 +286,19 @@ const page = () => {
             </div>
           </div>
           <div>
-            <button
-              className="px-6 py-2 border-2 border-gray-200  bg-[#A67B5B]  text-white rounded-md outline-none text-center "
-              onClick={handleAddPost}
-            >
-              Post
-            </button>
+            {session?.data?.user?.role === "farmer" && (
+              <button
+                className="px-6 py-2 border-2 border-gray-200  bg-[#A67B5B]  text-white rounded-md outline-none text-center "
+                onClick={handleAddPost}
+              >
+                Post
+              </button>
+            )}
           </div>
         </div>
 
         <div className="flex flex-col gap-8 overflow-hidden overflow-y-scroll max-h-[100dvh]">
-          {blog.map((items, index) => (
+          {blog?.map((items, index) => (
             <div
               key={index}
               className="flex flex-col p-4 border-2 rounded-md gap-4 "
@@ -143,21 +306,22 @@ const page = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-5">
                   <Image
-                    src={User}
-                    alt="userprofile"
+                    src={items?.image}
+                    alt={items.name}
                     width={48}
                     height={48}
-                    className="rounded-full"
+                    className="rounded-full bg-violet-50"
                   />
-                  <p>By: {items.author.name}</p>
+                  {/* <p>By: {items.author.name}</p> */}
+                  <p>By: {items.name}</p>
                 </div>
-                <p>{items.createdAt}</p>
+                <p>{new Date(items.created_at).toDateString()}</p>
               </div>
               <div className="text-lg font-semibold text-[#6D6F7B]">
                 {items.title}
               </div>
               <div className="text-[#6D6F7B]">
-                <ItemDescription description={items.discription} />
+                <ItemDescription description={items.description} />
               </div>
               <div className="flex gap-6">
                 {items.tags.map((tag, index) => (
@@ -166,16 +330,12 @@ const page = () => {
                   </button>
                 ))}
               </div>
-              <div className="flex gap-7">
+              <div className="flex w-full">
                 <div className="flex gap-3 items-center">
-                  <AiOutlineMessage />
-                  <p>{items.replies} replies</p>
+                  {/* <AiOutlineMessage />
+                  <p>{items.replies} replies</p> */}
                 </div>
-
-                <div className="flex gap-3 items-center">
-                  <FaEye />
-                  <p>{items.views} views</p>
-                </div>
+                <ItemReplay id={items.id} />
               </div>
             </div>
           ))}
@@ -234,7 +394,7 @@ const page = () => {
           >
             <RiCloseLine />
           </div>
-          <AddBlog  setOpen = {setOpen} />
+          <AddBlog setOpen={setOpen} />
         </div>
       )}
     </div>

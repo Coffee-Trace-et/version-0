@@ -242,7 +242,7 @@ const Page = () => {
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
-          {filteredProducts.map((product, index) => (
+          {filteredProducts?.map((product, index) => (
             <div
               key={index}
               className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
