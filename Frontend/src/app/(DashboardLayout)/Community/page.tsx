@@ -234,8 +234,7 @@ const page = () => {
           >
             <RiCloseLine />
           </div>
-          <AddBlog />
-
+          <AddBlog  setOpen = {setOpen} />
         </div>
       )}
     </div>

@@ -2,7 +2,7 @@ import React from "react";
 
 const OrderProduct = () => {
   return (
-    <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/3 border-2 rounded-xl">
+    <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 md:w-1/3 border-2 rounded-xl">
       <div className="flex flex-col gap-2">
         <label htmlFor="start-destination">Start Destination</label>
         <input
