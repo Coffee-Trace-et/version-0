@@ -1,7 +1,10 @@
+'use client'
 import { AdUnits } from "@mui/icons-material";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { RiCloseLine } from "react-icons/ri";
+import AddProduct from "../../components/product/addProduct";
 
 const data = [
   {
@@ -77,8 +80,27 @@ const data = [
 ];
 
 const page = () => {
+  const [open, setOpen] = useState<boolean>(false);
+  const handleAddUser = () => {
+    setOpen(!open);
+  };
+  const handleCloseAddUser = () => {
+    setOpen(false);
+  };
+
   return (
     <section>
+      {open && (
+          <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
+            <div
+              className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
+              onClick={handleCloseAddUser}
+            >
+              <RiCloseLine />
+            </div>
+            <AddProduct />
+          </div>
+        )}
       <div className="flex justify-between md:flex-row flex-col gap-2 mb-10">
         <input
           type="text"
@@ -87,7 +109,8 @@ const page = () => {
         />
         <div className="gap-2 flex md:flex-row flex-col-reverse">
           <button className="border md:w-[131px] w-full p-2 rounded-md font-semibold bg-white shadow-md">
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1"
+            onClick={handleAddUser}>
               <IoMdAdd className="text-black" />
               Create User
             </div>

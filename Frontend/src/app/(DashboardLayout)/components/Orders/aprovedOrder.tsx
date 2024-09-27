@@ -98,8 +98,8 @@ const ApprovedOrder = () => {
           onClick={() => handlePageClick(i)}
           className={`py-2 px-3 sm:px-4 md:py-2 rounded-xl mx-1 ${
             i === currentPage
-              ? "bg-[#49BEFF] text-white"
-              : "bg-white text-[#49BEFF] border border-primary.main"
+              ? "bg-palette-primary-main text-white"
+              : "bg-white text-palette-primary-main border border-primary.main"
           }`}
         >
           {i}
@@ -111,7 +111,7 @@ const ApprovedOrder = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold my-4 text-[#343C6A]">Approved Orders</h1>
+      <h1 className="text-xl font-semibold my-4 text-[#343C6A]">Approved Orders</h1>
 
       <div className="flex flex-col gap-5 w-full">
         <div className="flex flex-col gap-6 w-full">
@@ -162,7 +162,7 @@ const ApprovedOrder = () => {
         <div className="w-full flex justify-center items-center mt-4">
           <div className="flex justify-center items-center p-4">
             <button
-              className="cursor-pointer text-sm text-[#49BEFF] flex items-center gap-1 px-4 py-1"
+              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
               onClick={handlePrevPage}
               disabled={currentPage === 1}
             >
@@ -170,7 +170,7 @@ const ApprovedOrder = () => {
             </button>
             <div>{renderPageButtons()}</div>
             <button
-              className="cursor-pointer text-sm text-[#49BEFF] flex items-center gap-1 px-4 py-1"
+              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
               onClick={handleNextPage}
               disabled={currentPage === totalPages}
             >

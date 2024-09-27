@@ -33,7 +33,8 @@ const Login2 = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Login successful:", data);
+        const access = data.data.access_token;
+        console.log("Login successful:", data,access);
         // Handle successful login (store token, navigate to dashboard, etc.)
       } else {
         console.error("Login failed:", response.statusText);

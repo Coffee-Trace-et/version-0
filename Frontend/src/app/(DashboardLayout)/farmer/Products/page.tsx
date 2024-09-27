@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "../../components/product/ProductCard";
 import AddProduct from "../../components/product/addProduct";
 import { Box, Rating } from "@mui/material";
@@ -12,37 +12,32 @@ const page = () => {
   const [value, setValue] = useState<number[]>([20, 37]);
   const [rating, setRating] = useState<number | null>(2);
   const [open, setOpen] = useState<boolean>(false);
+  const [products, setProducts] = useState<any[]>([]);
+  console.log(products);
+  // State to store product data
 
-  const card = [
-    {
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },
-    {
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },
-    {
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },
-    {
-      image: "",
-      name: "Yetelekeme Yirgachefe Buna",
-      price: "$2000",
-      amount: "50 kg",
-      rating: "4.3",
-    },
-  ];
+  // Fetch products from the API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          "https://cofeetracebackend-2.onrender.com/api/v0/product/getall",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjZmM2JkMjRiMDliZjFmMTE4NGE1YWE1Iiwicm9sZSI6ImZhcm1lciIsIm5hbWUiOiJ0ZWtsdW1vIn0.lcr6-u5QOUtnDuSvRRkn-qtWvoXkq1pITem01OOUjuc`,
+            },
+          }
+        );
+        const data = await response.json();
+        setProducts(data.products); // Assuming the data is in 'products' field
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const handleAddProduct = () => {
     setOpen(!open);
@@ -108,14 +103,14 @@ const page = () => {
               placeholder="Min"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[0]}
-              onChange={(e) => handleInputChange(0, e.target.value)}
+              onChange={(e) => handleChange(e as any, [Number(e.target.value), value[1]])}
             />
             <input
               type="text"
               placeholder="Max"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[1]}
-              onChange={(e) => handleInputChange(1, e.target.value)}
+              onChange={(e) => handleChange(e as any, [value[0], Number(e.target.value)])}
             />
           </div>
 
@@ -125,9 +120,12 @@ const page = () => {
               value={value}
               onChange={handleChange}
               valueLabelDisplay="auto"
+              min={0}
+              max={5000}
             />
           </Box>
         </div>
+
         <div className="flex flex-col gap-3">
           <h1 className="text-lg font-semibold py-2 text-gray-700">Rating</h1>
           <Box sx={{ width: "auto" }}>
@@ -153,7 +151,7 @@ const page = () => {
       <div className="w-full sm:w-4/5 overflow-hidden overflow-y-scroll max-h-[100dvh]">
         <div className="hidden  sm:flex justify-end w-full py-4">
           <button
-            className="border-2 py-2 px-5 rounded-md font-bold text-lg text-white bg-[#A67B5B] focus:border-black"
+            className="border-2 py-2 px-5 rounded-md font-bold text-lg text-white bg-palette-primary-main focus:border-black"
             onClick={handleAddProduct}
           >
             Post Your Product
@@ -165,7 +163,7 @@ const page = () => {
             placeholder="Search shipment..."
             className="w-4/5 p-4 border rounded-md focus:outline-none focus:border-blue-500"
           />
-          <div className=" text-center  text-white p-4 rounded-full bg-[#A67B5B]">
+          <div className=" text-center  text-white p-4 rounded-full bg-palette-primary-main">
             <FaPlus onClick={handleAddProduct} />
           </div>
         </div>
@@ -181,9 +179,18 @@ const page = () => {
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center  sm:justify-between  overflow-y-auto">
-          {card.map((product, index) => (
-            <div className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer">
-              <ProductCard key={index} {...product} />
+          {products.map((product, index) => (
+            <div
+              key={index}
+              className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
+            >
+              <ProductCard
+                image={product.image || ""}
+                name={product.product_name}
+                price={`$${product.price}`}
+                amount={`${product.quantity} kg`}
+                rating={product.rating.toFixed(1)}
+              />
             </div>
           ))}
         </div>
