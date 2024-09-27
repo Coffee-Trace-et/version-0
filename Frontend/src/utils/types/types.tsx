@@ -31,4 +31,20 @@ export interface User {
   role: string; // Add the role property
 }
 
+export interface Product {
+  id: string;
+  farmer_id: string;
+  farmer_name: string;
+  product_name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  origin:string;
+  image_url: string;
+  created_at: Date;
+  updated_at: Date;
+  rating: number;
+}
+
+
 export type { Destination, RecentTransactionsProps, UserData };

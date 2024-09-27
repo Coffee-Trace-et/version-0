@@ -24,7 +24,7 @@ const Product = ({...item}:ProductCardType) => {
             height={40}
             className="w-[97%]"
           />
-          <div className="text-[#939393] font-semibold text-[16px] pb-4">
+          <div className="text-[#939393] font-semibold text-sm py-4">
             {item.name}
           </div>
           <div className="flex justify-between w-full">

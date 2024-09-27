@@ -7,15 +7,22 @@ import { Box, Rating } from "@mui/material";
 import { Slider } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
 import { RiCloseLine } from "react-icons/ri";
+import { useSession } from "next-auth/react";
+import {Product} from "@/utils/types/types"
 
-const page = () => {
+const Page = () => {
   const [value, setValue] = useState<number[]>([20, 37]);
   const [rating, setRating] = useState<number | null>(2);
   const [open, setOpen] = useState<boolean>(false);
-  const [products, setProducts] = useState<any[]>([]);
-  console.log(products);
-  // State to store product data
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
+  // Filter states
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
+  const { data: session, status } = useSession();
+
+  
   // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,12 +32,13 @@ const page = () => {
           {
             method: "GET",
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjZmM2JkMjRiMDliZjFmMTE4NGE1YWE1Iiwicm9sZSI6ImZhcm1lciIsIm5hbWUiOiJ0ZWtsdW1vIn0.lcr6-u5QOUtnDuSvRRkn-qtWvoXkq1pITem01OOUjuc`,
+              Authorization: `Bearer ${session?.accessToken}`,
             },
           }
         );
         const data = await response.json();
-        setProducts(data.products); // Assuming the data is in 'products' field
+        setProducts(data.products);
+        setFilteredProducts(data.products); // Initially, display all products
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -42,6 +50,7 @@ const page = () => {
   const handleAddProduct = () => {
     setOpen(!open);
   };
+
   const handleCloseAddProduct = () => {
     setOpen(false);
   };
@@ -56,6 +65,33 @@ const page = () => {
     setValue(updatedValue);
   };
 
+  const handleTypeChange = (type: string) => {
+    setSelectedTypes((prev) =>
+      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+    );
+  };
+
+  const handleApplyFilters = () => {
+    const filtered = products.filter((product) => {
+      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(product.origin);
+      const matchesLocation = !selectedLocation || product.origin === selectedLocation;
+      const matchesPrice = product.price >= value[0] && product.price <= value[1];
+      const matchesRating = rating === null || product.rating >= rating;
+
+      return matchesType && matchesLocation && matchesPrice && matchesRating;
+    });
+
+    setFilteredProducts(filtered);
+  };
+
+  const handleResetFilters = () => {
+    setSelectedTypes([]);
+    setSelectedLocation("");
+    setValue([50, 100]);
+    setRating(2);
+    setFilteredProducts(products); // Reset to initial products
+  };
+
   return (
     <div className="flex gap-5 w-full relative">
       <div className="hidden sm:block sm:w-1/3 lg:w-1/4 border-2 py-4 px-2">
@@ -66,28 +102,49 @@ const page = () => {
           <h1 className="text-lg font-semibold py-2 text-gray-700">Type</h1>
           <div className="flex gap-3">
             <div className="flex gap-3 w-1/2 items-center ">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                onChange={() => handleTypeChange("Yirgachefe")}
+                checked={selectedTypes.includes("Yirgachefe")}
+              />
               <label htmlFor="">Yirgachefe</label>
             </div>
             <div className="flex gap-3 w-1/2 items-center ">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                onChange={() => handleTypeChange("Illubabur")}
+                checked={selectedTypes.includes("Illubabur")}
+              />
               <label htmlFor="">Illubabur</label>
             </div>
           </div>
           <div className="flex gap-3">
             <div className="flex w-1/2 gap-3 items-center ">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                onChange={() => handleTypeChange("Jimma")}
+                checked={selectedTypes.includes("Jimma")}
+              />
               <label htmlFor="">Jimma</label>
             </div>
             <div className="flex gap-3 w-1/2 items-center ">
-              <input type="checkbox" />
+              <input
+                type="checkbox"
+                onChange={() => handleTypeChange("Kafa")}
+                checked={selectedTypes.includes("Kafa")}
+              />
               <label htmlFor="">Kafa</label>
             </div>
           </div>
         </div>
         <div className="flex flex-col gap-3">
           <h1 className="text-lg font-semibold py-2 text-gray-700">Location</h1>
-          <select className="px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select
+            className="px-4 py-2 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedLocation}
+            onChange={(e) => setSelectedLocation(e.target.value)}
+          >
+            <option value="">All Locations</option>
             <option value="Yirgachefe">Yirgachefe</option>
             <option value="Harar">Harar</option>
             <option value="Sidamo">Sidamo</option>
@@ -139,10 +196,16 @@ const page = () => {
           </Box>
         </div>
         <div className="flex justify-around w-full py-4">
-          <button className="border-2 py-2 px-5 rounded-md font-bold text-lg">
+          <button
+            className="border-2 py-2 px-5 rounded-md font-bold text-lg"
+            onClick={handleResetFilters}
+          >
             Reset
           </button>
-          <button className="border-2 py-2 px-5 rounded-md font-bold text-lg">
+          <button
+            className="border-2 py-2 px-5 rounded-md font-bold text-lg"
+            onClick={handleApplyFilters}
+          >
             Apply
           </button>
         </div>
@@ -178,14 +241,14 @@ const page = () => {
             <AddProduct />
           </div>
         )}
-        <div className="flex gap-5 flex-wrap justify-center  sm:justify-between  overflow-y-auto">
-          {products.map((product, index) => (
+        <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
+          {filteredProducts.map((product, index) => (
             <div
               key={index}
               className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
             >
               <ProductCard
-                image={product.image || ""}
+                image={product.image_url || ""}
                 name={product.product_name}
                 price={`$${product.price}`}
                 amount={`${product.quantity} kg`}
@@ -199,4 +262,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
