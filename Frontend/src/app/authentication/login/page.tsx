@@ -1,13 +1,18 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { FaGoogle } from "react-icons/fa";
 import { RiFacebookCircleFill } from "react-icons/ri";
 import { TbBrandApple } from "react-icons/tb";
 import Image from "next/image";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const Login2 = () => {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,57 +20,57 @@ const Login2 = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage(""); // Reset error message
+    e.preventDefault(); // Prevent default form submission
+    const result = await signIn("credentials", {
+      redirect: false, // Prevent automatic redirect to handle it manually
+      email: formData.email,
+      password: formData.password,
+      role: formData.role,
+    });
 
-    // Basic validation
-    if (!formData.email || !formData.password) {
-      setErrorMessage("Email and password are required.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        "https://cofeetracebackend-2.onrender.com/api/v0/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Login successful:", data);
-
-        // Ensure you access the data correctly
-        const { access_token, user_data } = data.data; // Accessing nested data
-
-        // Store access token and user data in local storage
-        localStorage.setItem("token", access_token);
-        localStorage.setItem("userData", JSON.stringify(user_data));
-
-        // Redirect to the dashboard or another page
-        // window.location.href = '/dashboard';
-      } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || "Login failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error during login request:", error);
-      setErrorMessage("An error occurred. Please try again later.");
+    if (result?.error) {
+      setErrorMessage(result.error); // Display error message if login fails
+    } else {
+      setErrorMessage(""); // Clear error on successful login
     }
   };
+
+  // Role-based redirect after successful login
+  useEffect(() => {
+    if (session) {
+      const role = session.user?.role;
+      switch (role) {
+        case "farmer":
+          router.push("/farmer/Dashboard");
+          break;
+        case "merchant":
+          router.push("/Buyer/Dashboard");
+          break;
+        case "driver":
+          router.push("/Transporter/Dashboard");
+          break;
+        case "admin":
+          router.push("/Admin/Dashboard");
+          break;
+        default:
+          router.push("/Dashboard");
+          break;
+      }
+    }
+  }, [session, router]);
 
   return (
     <PageContainer title="Login" description="this is Login page">
@@ -106,8 +111,8 @@ const Login2 = () => {
               className="bg-gray-200 px-4 py-2 min-w-[330px] max-w-[350px] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="Farmer">Farmer</option>
-              <option value="Buyer">Buyer</option>
-              <option value="Transporter">Transporter</option>
+              <option value="merchant">Buyer</option>
+              <option value="driver">Transporter</option>
             </select>
 
             <div className="flex items-center min-w-[330px] max-w-[350px] justify-between">
@@ -117,7 +122,7 @@ const Login2 = () => {
               </div>
               <Link
                 href="/auth/forgot-password"
-                className="text-blue-500 hover:underline"
+                className="text-palette-primary-dark hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -125,13 +130,13 @@ const Login2 = () => {
 
             <button
               type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 max-w-[350px]"
+              className="bg-palette-primary-main text-white py-2 px-4 rounded-lg hover:bg-palette-primary-dark transition duration-300 max-w-[350px]"
             >
               Submit
             </button>
 
             <div>
-              <p className="text-center ">
+              <p className="text-center">
                 Don&apos;t have an account?&nbsp;&nbsp;
                 <Link
                   href="/authentication/register"
@@ -145,16 +150,22 @@ const Login2 = () => {
             <div>
               <p className="text-center font-[calibri]">Or login with</p>
               <div className="flex justify-center space-x-4 my-2">
-                <div className="bg-red-100 w-[76px] h-[30px] rounded-full flex justify-center items-center">
+                <div
+                  className="bg-red-100 w-[76px] h-[30px] rounded-full flex justify-center items-center cursor-pointer"
+                  onClick={() => signIn("google")}
+                >
                   <FaGoogle className="text-red-500" />
                 </div>
                 <div
-                  className="bg-blue-100 w-[76px] h-[30px] rounded-full flex justify-center items-center"
-                  style={{ color: "#3b5998" }}
+                  className="bg-blue-100 w-[76px] h-[30px] rounded-full flex justify-center items-center cursor-pointer"
+                  onClick={() => signIn("facebook")}
                 >
                   <RiFacebookCircleFill className="text-blue-500" />
                 </div>
-                <div className="bg-[#F3F4F6] w-[76px] h-[30px] rounded-full flex justify-center items-center">
+                <div
+                  className="bg-[#F3F4F6] w-[76px] h-[30px] rounded-full flex justify-center items-center cursor-pointer"
+                  onClick={() => signIn("apple")}
+                >
                   <TbBrandApple />
                 </div>
               </div>

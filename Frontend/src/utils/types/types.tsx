@@ -16,4 +16,19 @@ interface Destination {
 interface RecentTransactionsProps {
   destinations: Destination[];
 }
-export type { Destination, RecentTransactionsProps };
+
+interface UserData {
+  name: string;
+  email: string;
+  role: string;
+}
+
+// types.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string; // Add the role property
+}
+
+export type { Destination, RecentTransactionsProps, UserData };

@@ -21,6 +21,7 @@ import { IoMdSettings } from "react-icons/io";
 import { HiMiniUsers } from "react-icons/hi2";
 
 import { uniqueId } from "lodash";
+import { title } from "process";
 
 const Menuitems = [
   {
@@ -44,12 +45,16 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Admin/Dashboard",
+    role: "admin",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Users",
     icon: FaRegUser,
     href: "/Admin/Users",
+    role: "admin",
+    type: "",
   },
 
   {
@@ -57,6 +62,8 @@ const Menuitems = [
     title: "Reports",
     icon: MdOutlineReportGmailerrorred,
     href: "/Admin/Reports",
+    role: "admin",
+    type: "",
   },
 
   {
@@ -68,30 +75,40 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Transporter/Dashboard",
+    role: "driver",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/Transporter/Products",
+    role: "driver",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/Transporter/Orders",
+    role: "driver",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/Transporter/Transactions",
+    role: "driver",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/Transporter/Shipments",
+    role: "driver",
+    type: "",
   },
 
   {
@@ -103,30 +120,40 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/Buyer/Dashboard",
+    role: "merchant",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/Buyer/Products",
+    role: "merchant",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/Buyer/Orders",
+    role: "merchant",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/Buyer/Transactions",
+    role: "merchant",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/Buyer/Shipments",
+    role: "merchant",
+    type: "",
   },
   {
     navlabel: true,
@@ -137,30 +164,40 @@ const Menuitems = [
     title: "Dashboard",
     icon: IconLayoutDashboard,
     href: "/farmer/Dashboard",
+    role: "farmer",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Products",
     icon: FaPeopleCarryBox,
     href: "/farmer/Products",
+    role: "farmer",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Orders",
     icon: BsCart3,
     href: "/farmer/Orders",
+    role: "farmer",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Transactions",
     icon: BiCreditCard,
     href: "/farmer/Transactions",
+    role: "farmer",
+    type: "",
   },
   {
     id: uniqueId(),
     title: "Shipments",
     icon: CiDeliveryTruck,
     href: "/farmer/Shipments",
+    role: "farmer",
+    type: "",
   },
 
   {
@@ -172,6 +209,8 @@ const Menuitems = [
     title: "Community",
     icon: HiMiniUsers,
     href: "/Community",
+    role: "all",
+    type: "",
   },
 
   {
@@ -179,13 +218,8 @@ const Menuitems = [
     title: "Settings",
     icon: IoMdSettings,
     href: "/Settings",
-  },
-
-  {
-    id: uniqueId(),
-    title: "Logout",
-    icon: IconLogin,
-    href: "/authentication/login",
+    role: "all",
+    type: "",
   },
 
   {
@@ -219,12 +253,14 @@ const Menuitems = [
     title: "Login",
     icon: IconLogin,
     href: "/authentication/login",
+    role: "",
   },
   {
     id: uniqueId(),
     title: "Register",
     icon: IconUserPlus,
     href: "/authentication/register",
+    role: "",
   },
   {
     navlabel: true,
