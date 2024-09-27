@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { FaCaretDown } from "react-icons/fa";
+import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react"; // Import signOut from next-auth/react
 import { useSession } from "next-auth/react";
 const Profile = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   const handleToggleDropdown = () => {
@@ -15,10 +17,11 @@ const Profile = () => {
   const handleCloseDropdown = () => {
     setDropdownOpen(false);
   };
-  if (!session) {
-    // redirect("/authentication/login");
-    window.location.href = "/authentication/login";
-    return null;
+
+  // Redirect to login page if session is not found and it's not loading
+  if (status !== "loading" && !session) {
+    router.push("/authentication/login"); // Redirect user to login page
+    return null; // Return null to prevent further rendering
   }
 
   return (

@@ -1,23 +1,22 @@
 "use client";
-import React, { FC, useState, useEffect } from "react";
+import React, { FC } from "react";
 import Menuitems from "./MenuItems";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation"; // Import useRouter for redirect
 import { Box, List } from "@mui/material";
 import NavItem from "./NavItem";
-import { signOut } from "@/auth";
-import { UserData } from "@/utils/types/types";
 import { useSession } from "next-auth/react";
 
 const SidebarItems: FC<SidebarItemsProps> = ({ toggleMobileSidebar }) => {
   const pathname = usePathname();
+  const router = useRouter(); // Initialize router for redirect
   const pathDirect = pathname;
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
-  if (!session) {
-    // redirect("/autenticacion/login");
-    window.location.href = "/autenticacion/login";
-    return null;
+  // Redirect to login page if session is not found and it's not loading
+  if (status !== "loading" && !session) {
+    router.push("/authentication/login"); // Redirect user to login page
+    return null; // Return null to prevent further rendering
   }
 
   return (

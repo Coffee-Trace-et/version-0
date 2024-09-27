@@ -23,4 +23,12 @@ interface UserData {
   role: string;
 }
 
+// types.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string; // Add the role property
+}
+
 export type { Destination, RecentTransactionsProps, UserData };
