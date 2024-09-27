@@ -16,7 +16,7 @@ interface IFormInput {
   description: string;
   price: number; // Price should be a number (float)
   quantity: number; // Quantity should be a number (float)
-  origin: number;
+  origin: string;
   image_url: string; // For the uploaded image URL
 }
 
@@ -79,6 +79,7 @@ const AddProduct: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    console.log("submited data",data)
     const accessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjZmM2JkMjRiMDliZjFmMTE4NGE1YWE1Iiwicm9sZSI6ImZhcm1lciIsIm5hbWUiOiJ0ZWtsdW1vIn0.lcr6-u5QOUtnDuSvRRkn-qtWvoXkq1pITem01OOUjuc";
 
@@ -133,7 +134,6 @@ const AddProduct: React.FC = () => {
             id="origin"
             {...register("origin", {
               required: "origin is required",
-              valueAsNumber: true,
             })}
             className="p-4 border-2 border-gray-200 rounded-md outline-none"
           />

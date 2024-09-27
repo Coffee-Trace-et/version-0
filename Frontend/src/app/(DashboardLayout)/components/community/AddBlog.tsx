@@ -55,7 +55,7 @@ const AddBlog = ({setOpen}:AddBlogProps) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/3 border-2"
+      className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 md:w-1/3 border-2"
     >
       <div className="flex flex-col gap-2">
         <label htmlFor="title">Title</label>
