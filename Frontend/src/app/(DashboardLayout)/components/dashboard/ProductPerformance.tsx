@@ -161,9 +161,9 @@ const ProductPerformance = () => {
           <Box
           sx={{
             padding: "10px 20px",
-            backgroundColor: "#49BEFF",
+            backgroundColor: "#A67B5B",
             color: "white",
-            borderRadius: "10px",
+            borderRadius: "5px",
           }}
           >
             Load More

@@ -50,7 +50,7 @@ const OrderProduct = () => {
       <div className="flex gap-2 mt-4">
         <input
           type="submit"
-          value="Add Product"
+          value="Order Now"
           className="w-full p-4 border-2 bg-[#A67B5B] text-white border-gray-200 rounded-md outline-none text-center"
         />
       </div>
