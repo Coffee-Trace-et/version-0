@@ -6,6 +6,7 @@ import { RiFacebookCircleFill } from "react-icons/ri";
 import { TbBrandApple } from "react-icons/tb";
 import Image from "next/image";
 import PageContainer from "@/app/(DashboardLayout)/components/container/PageContainer";
+import { signIn } from "next-auth/react"; // Ensure you import from next-auth/react
 
 const Login2 = () => {
   const [formData, setFormData] = useState({
@@ -15,72 +16,37 @@ const Login2 = () => {
   });
   const [errorMessage, setErrorMessage] = useState("");
 
+  // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage(""); // Reset error message
-
-    // Basic validation
-    if (!formData.email || !formData.password) {
-      setErrorMessage("Email and password are required.");
-      return;
-    }
-
+    e.preventDefault(); // Prevent default form submission
     try {
-      const response = await fetch(
-        "https://cofeetracebackend-2.onrender.com/api/v0/user/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const result = await signIn("credentials", {
+        redirect: false, // Prevents automatic redirect
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Login successful:", data);
-
-        // Ensure you access the data correctly
-        const { access_token, user_data } = data.data; // Accessing nested data
-
-        // Store access token and user data in local storage
-        localStorage.setItem("token", access_token);
-        localStorage.setItem("userData", JSON.stringify(user_data));
-
-        // Redirect to the dashboard or another page
-        // window.location.href = '/dashboard';
-        switch (user_data.role) {
-          case "farmer":
-            window.location.href = "/farmer/Dashboard";
-            break;
-          case "merchant":
-            window.location.href = "/Buyer/Dashboard";
-            break;
-          case "driver":
-            window.location.href = "/Transporter/Dashboard";
-            break;
-          case "admin":
-            window.location.href = "/Admin/Dashboard";
-            break;
-          default:
-            window.location.href = "/dashboard";
-            break;
-        }
+      if (result?.error) {
+        setErrorMessage(result.error); // Display error message if login fails
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || "Login failed. Please try again.");
+        // Handle successful login (you can redirect here if needed)
+        console.log("Login successful", result);
       }
     } catch (error) {
-      console.error("Error during login request:", error);
-      setErrorMessage("An error occurred. Please try again later.");
+      console.error("Login error:", error);
+      setErrorMessage("An unexpected error occurred.");
     }
   };
 
