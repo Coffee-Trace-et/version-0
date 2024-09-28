@@ -10,6 +10,7 @@ import AddBlog from "../components/community/AddBlog";
 import { useSession } from "next-auth/react";
 import { BiSend } from "react-icons/bi";
 import ItemReplay from "../components/community/replay";
+import { reverse } from "lodash";
 
 interface Discription {
   description: string;
@@ -298,7 +299,7 @@ const page = () => {
         </div>
 
         <div className="flex flex-col gap-8 overflow-hidden overflow-y-scroll max-h-[100dvh]">
-          {blog?.map((items, index) => (
+          {blog?.reverse().map((items, index) => (
             <div
               key={index}
               className="flex flex-col p-4 border-2 rounded-md gap-4 "
@@ -332,8 +333,6 @@ const page = () => {
               </div>
               <div className="flex w-full">
                 <div className="flex gap-3 items-center">
-                  {/* <AiOutlineMessage />
-                  <p>{items.replies} replies</p> */}
                 </div>
                 <ItemReplay id={items.id} />
               </div>

@@ -4,6 +4,7 @@ import { AiOutlineMessage } from "react-icons/ai";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { BiSend } from "react-icons/bi";
+import { useForm } from "react-hook-form"; // Import useForm
 
 interface Replay {
   id: string;
@@ -19,14 +20,20 @@ interface ItemsReplay {
   id: string;
 }
 
+interface FormValues {
+  reply: string;
+}
+
 const ItemReplay = ({ id }: ItemsReplay) => {
   const session = useSession();
   const [isExpanded, setIsExpanded] = useState(true);
   const [replay, setReplay] = useState<Replay[]>();
-  const [replayValue, setReplayValue] = useState<string>();
+
+  const { register, handleSubmit, reset } = useForm<FormValues>(); // Initialize useForm
+
   const toggleExpanded = () => setIsExpanded(!isExpanded);
 
-  const postReplay = async () => {
+  const postReplay = async (data: FormValues) => {
     try {
       const response = await fetch(
         `https://cofeetracebackend-2.onrender.com/api/v0/forum/${id}/reply`,
@@ -36,14 +43,15 @@ const ItemReplay = ({ id }: ItemsReplay) => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${session?.data?.accessToken}`,
           },
-          body: JSON.stringify({ reply: replayValue }),
+          body: JSON.stringify({ reply: data.reply }),
         }
       );
       if (response.ok) {
-        console.log("post replay response", response);
+        console.log("Post reply response", response);
+        reset(); // Reset the form when response is OK
       }
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.error("Error posting replay:", error);
     }
   };
 
@@ -65,7 +73,7 @@ const ItemReplay = ({ id }: ItemsReplay) => {
           setReplay(data.replies);
         }
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching replays:", error);
       }
     };
 
@@ -94,7 +102,7 @@ const ItemReplay = ({ id }: ItemsReplay) => {
 
           <div className="flex flex-col gap-6 w-full">
             {replay?.map((replays, index) => (
-              <div key={index} className="flex gap-4 items-start  w-full">
+              <div key={index} className="flex gap-4 items-start w-full">
                 <Image
                   src={replays?.image}
                   alt={replays.name}
@@ -115,22 +123,25 @@ const ItemReplay = ({ id }: ItemsReplay) => {
             ))}
           </div>
 
+          {/* Reply Input Section */}
           <div className="mt-4">
-            <div className="w-full flex gap-2 items-center px-3 py-2 border border-gray-300 rounded-full bg-white">
+            <form
+              className="w-full flex gap-2 items-center px-3 py-2 border border-gray-300 rounded-full bg-white"
+              onSubmit={handleSubmit(postReplay)} // Use handleSubmit from useForm
+            >
               <input
                 type="text"
                 placeholder="Enter reply"
                 className="w-full px-3 py-2 outline-none text-sm text-gray-700 rounded-full"
-                onChange={(e) => setReplayValue(e.target.value)}
+                {...register("reply", { required: true })} // Register reply input
               />
               <button
                 className="text-blue-500 hover:text-blue-700"
                 type="submit"
-                onClick={postReplay}
               >
                 <BiSend className="text-2xl md:text-3xl" />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
