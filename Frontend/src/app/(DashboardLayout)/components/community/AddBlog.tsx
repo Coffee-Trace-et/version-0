@@ -2,6 +2,8 @@ import { method } from "lodash";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Tag {
   tag: string;
@@ -16,7 +18,7 @@ interface AddBlogProps {
   setOpen: (data: boolean) => void;
 }
 
-const AddBlog = ({setOpen}:AddBlogProps) => {
+const AddBlog = ({ setOpen }: AddBlogProps) => {
   const {
     register,
     handleSubmit,
@@ -24,17 +26,31 @@ const AddBlog = ({setOpen}:AddBlogProps) => {
   } = useForm<Blog>();
   const session = useSession();
 
-  const onSubmit =  async (data: Blog) => {
-      const tagsArray = []; 
-
-      if (data.tag) {
-        tagsArray.push(data.tag); 
-      }
+  const notifySuccess = () => {
+    toast.success("Blog posted successfully!", {
+      position: "top-right",
+      autoClose: 1000,
+    });
   
-      const submitData = {
-        ...data,
-        tags: tagsArray,
-      };
+    setTimeout(() => {
+      setOpen(false);
+    }, 1000); 
+  };
+  const notifyError = () => toast.error("Failed to post the blog.");
+
+  const onSubmit = async (data: Blog) => {
+    const tagsArray = [];
+
+    if (data.tag) {
+      tagsArray.push(data.tag);
+    }
+
+    const submitData = {
+      ...data,
+      tags: tagsArray,
+    };
+
+    try {
       const res = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/forum/post",
         {
@@ -48,8 +64,13 @@ const AddBlog = ({setOpen}:AddBlogProps) => {
       );
 
       if (res.ok) {
-        setOpen(false)
+        notifySuccess();
+      } else {
+        notifyError();
       }
+    } catch (error) {
+      notifyError();
+    }
   };
 
   return (
@@ -92,7 +113,7 @@ const AddBlog = ({setOpen}:AddBlogProps) => {
           <option value="System Update">System Update</option>
           <option value="Improvement">Improvement</option>
           <option value="Selling">Selling</option>
-          <option value="Indiginous">Indigenous</option>
+          <option value="Indigenous">Indigenous</option>
         </select>
         {errors.tag && (
           <span className="text-red-500">{errors.tag.message}</span>
@@ -106,6 +127,7 @@ const AddBlog = ({setOpen}:AddBlogProps) => {
         >
           Post Blog
         </button>
+        <ToastContainer />
       </div>
     </form>
   );

@@ -37,8 +37,8 @@ export interface Product {
   farmer_name: string;
   product_name: string;
   description: string;
-  price: number;
-  quantity: number;
+  price: string;
+  quantity: string;
   origin:string;
   image_url: string;
   created_at: Date;
