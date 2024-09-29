@@ -112,7 +112,7 @@ const SalesOverview = () => {
         const expenses: number[] = [];
         const categories: string[] = [];
 
-        transactions.forEach((transaction: any) => {
+        transactions?.forEach((transaction: any) => {
           const date = new Date(transaction.datetime.split("")[0]);
           const amount = Math.abs(transaction.amount);
           const isExpense = transaction.amount < 0;

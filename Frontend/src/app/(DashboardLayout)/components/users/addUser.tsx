@@ -8,6 +8,10 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import app from "@/app/firebase";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // Define the form data type
 interface IFormInput {
@@ -20,7 +24,12 @@ interface IFormInput {
   image?: string; // Add image field to form input
 }
 
-const AddUsers: React.FC = () => {
+interface AddUserProps {
+  setOpen: (data: boolean) => void;
+}
+
+
+const AddUsers = ({ setOpen }: AddUserProps) => {
   const {
     register,
     reset,
@@ -29,14 +38,31 @@ const AddUsers: React.FC = () => {
     formState: { errors },
   } = useForm<IFormInput>();
 
-  const fileInputRef = useRef<HTMLInputElement>(null); // Corrected useRef import
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
   const [uploading, setUploading] = useState(false); // Initialize uploading state
 
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
+  const notifySuccess = () => {
+    toast.success("user Added successfully!", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  
+    setTimeout(() => {
+      setUploading(false)
+      setOpen(false);
+    }, 1000); 
+  };
+  const notifyError = () => {
+    toast.error("Failed to add the user.", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  
+    setTimeout(() => {
+      setUploading(false)
+    }, 1000); 
   };
 
   const handleFileChange = async (
@@ -50,7 +76,7 @@ const AddUsers: React.FC = () => {
   };
 
   const uploadImageToCloud = async (file: File): Promise<string> => {
-    const storage = getStorage(); // Make sure Firebase app instance is available here
+    const storage = getStorage(app);
     const storageRef = ref(storage, file.name);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
@@ -79,7 +105,6 @@ const AddUsers: React.FC = () => {
       );
     });
   };
-
   // Function to handle form submission
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     console.log("Form data", data);
@@ -98,15 +123,14 @@ const AddUsers: React.FC = () => {
       );
 
       if (response.ok) {
-        console.log("User successfully added");
-        reset(); // Reset form fields
+        console.log(response)
+        notifySuccess();
       } else {
-        console.error("Failed to add user", await response.json());
+        notifyError();
       }
     } catch (error) {
-      console.error("Error uploading file or submitting form", error);
-    } finally {
-      setUploading(false); // Reset uploading state
+      console.error("Error adding the product:", error);
+      notifyError();
     }
   };
 
@@ -154,14 +178,14 @@ const AddUsers: React.FC = () => {
         </div>
 
         {/* Image Upload */}
-        {/* <div>
+        <div>
           <label className="block text-sm font-medium">
             Image <span className="text-red-500">*</span>
           </label>
           <input
             type="file"
             ref={fileInputRef}
-            className="mt-1 block w-full text-sm p-4 border-2 border-gray-200 rounded-md outline-none text-gray-500"
+            className="mt-1 block w-full text-sm p-4 border-2 border-gray-200 rounded-md outline-none text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-palette-primary-main hover:file:bg-violet-100"
             onChange={handleFileChange}
           />
           {uploadProgress !== null && (
@@ -176,9 +200,11 @@ const AddUsers: React.FC = () => {
             </div>
           )}
           {errors.image && (
-            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.image.message}
+            </p>
           )}
-        </div> */}
+        </div>
 
         {/* Role Selection */}
         <div className="flex flex-col gap-2">
@@ -237,6 +263,7 @@ const AddUsers: React.FC = () => {
           />
         </div>
       </form>
+      <ToastContainer/>
     </div>
   );
 };

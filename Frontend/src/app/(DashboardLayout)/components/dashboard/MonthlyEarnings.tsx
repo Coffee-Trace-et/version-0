@@ -79,7 +79,7 @@ const MonthlyEarnings = ({title}:propsType) => {
         const earnings: number[] = [];
 
         // Filter transactions by the selected month
-        transactions.forEach((transaction: any) => {
+        transactions?.forEach((transaction: any) => {
           const date = new Date(transaction.datetime);
           const transactionMonth = date.getMonth() + 1; // Get month (1-12)
             

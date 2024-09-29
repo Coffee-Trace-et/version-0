@@ -39,7 +39,12 @@ function formatDate(dateString: string): string {
   }).format(date);
 }
 
-const RecentTransactions = () => {
+interface RecentTransactionsProps {
+  setTotalEarnings: (earnings: number) => void;
+  setTotalAmount: (earnings: number) => void;
+}
+
+const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactionsProps) => {
   const [allPage, setAllPage] = useState(1);
   const [allData, setAllData] = useState<Transaction[]>();
   const [loading, setLoading] = useState(false);
@@ -61,8 +66,23 @@ const RecentTransactions = () => {
 
       if (res.ok) {
         const data = await res.json();
-        console.log(data);
+        const earnings: number[] = [];
+        const quntity: number[] = [];
+
+        // Filter transactions by the selected month
+        data.data?.forEach((transaction: any) => {
+          const date = new Date(transaction.datetime);
+          const transactionMonth = date.getMonth() + 1; // Get month (1-12)
+            
+          
+            if (transaction.amount > 0) {
+              earnings.push(transaction.amount);
+              quntity.push(transaction.quantity);
+          }
+        });
         setAllData(data.data);
+        setTotalEarnings(earnings?.reduce((a, b) => a + b, 0));
+        setTotalAmount(quntity?.reduce((a, b) => a + b, 0));
       }
     };
 
@@ -71,7 +91,7 @@ const RecentTransactions = () => {
 
   if (allData === undefined) return <Loading />;
 
-  const totalAllPages = Math.ceil(allData.length / itemsPerPage);
+  const totalAllPages = Math.ceil(allData?.length / itemsPerPage);
 
   const handlePrevPage = () => {
     if (allPage > 1) {
@@ -91,12 +111,12 @@ const RecentTransactions = () => {
 
   const getPagedData = (data: Transaction[], page: number) => {
     const startIndex = (page - 1) * itemsPerPage;
-    return data.slice(startIndex, startIndex + itemsPerPage);
+    return data?.slice(startIndex, startIndex + itemsPerPage);
   };
 
   const renderContent = () => {
     const transactions = getPagedData(allData, allPage);
-    return transactions.map((transaction) => ({
+    return transactions?.map((transaction) => ({
       ...transaction,
       amount: Math.abs(transaction.amount), // Ensure it's always positive
     }));
@@ -127,7 +147,7 @@ const RecentTransactions = () => {
               </TableCell>
               <TableCell>
                 <Typography variant="subtitle2" fontWeight={600}>
-                  Buyer Name
+                  Name
                 </Typography>
               </TableCell>
               <TableCell>
@@ -153,7 +173,7 @@ const RecentTransactions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {renderContent().map((transaction, index) => (
+            {renderContent()?.map((transaction, index) => (
               <TableRow key={transaction.id}>
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center" }}>

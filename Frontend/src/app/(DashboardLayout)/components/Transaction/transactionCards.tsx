@@ -1,26 +1,32 @@
 import React from "react";
 import { FaHandHoldingUsd, FaSortAmountUpAlt } from "react-icons/fa";
 import { TbMoneybag } from "react-icons/tb";
+import { useSession } from "next-auth/react";
 
-const Cards = () => {
+interface CardProps{
+  earlning:number
+  expense:number
+}
+const Cards = ({earlning,expense}:CardProps) => {
+  const session = useSession()
   const card = [
     {
       icon: <TbMoneybag />,
       name: "income",
-      amount: "$ 3000",
+      amount:session.data?.user.role === 'farmer' || session.data?.user.role === 'driver' ? earlning : 0,
       bg: "bg-lime-200",
     },
     {
       icon: <FaSortAmountUpAlt />,
 
       name: "Amount",
-      amount: "1000 kg",
+      amount: `${expense} kg`,
       bg: "bg-[#FF82AC]",
     },
     {
       icon: <FaHandHoldingUsd />,
       name: "Expense",
-      amount: "$ 3000",
+      amount: session.data?.user.role === 'merchant' ? earlning : 0,
       bg: "bg-blue-200",
     },
   ];

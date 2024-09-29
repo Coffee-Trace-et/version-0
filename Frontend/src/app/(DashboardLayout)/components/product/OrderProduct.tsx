@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { FieldError, FieldErrorsImpl, Merge, useForm } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Product {
   id: string;
@@ -38,9 +40,32 @@ const OrderProduct = ({ product }: { product: Product }) => {
   const [filteredDrivers, setFilteredDrivers] = useState<Driver[]>([]);
   const [selectedDriver, setSelectedDriver] = useState<Driver | null>(null);
   const [error, setError] = useState<string>("");
+  const [uploading, setUploading] = useState(false); // Initialize uploading state
+
 
   const selectedDestination = watch("destination");
   const drivingCoverage = watch("coverage");
+
+  const notifySuccess = () => {
+    toast.success("user Added successfully!", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  
+    setTimeout(() => {
+      setUploading(false)
+    }, 1000); 
+  };
+  const notifyError = () => {
+    toast.error("Failed to add the user.", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  
+    setTimeout(() => {
+      setUploading(false)
+    }, 1000); 
+  };
 
   // Fetch all drivers when the component mounts
   useEffect(() => {
@@ -125,9 +150,15 @@ const OrderProduct = ({ product }: { product: Product }) => {
           }
         );
         const data = await response.json();
-        console.log("Order created:", data);
+        if (response.ok) {
+          console.log(response)
+          notifySuccess();
+        } else {
+          notifyError();
+        }
       } catch (error) {
-        console.error("Error creating order:", error);
+        console.error("Error adding the product:", error);
+        notifyError();
       }
     };
 
@@ -214,6 +245,7 @@ const OrderProduct = ({ product }: { product: Product }) => {
           />
         </div>
       </form>
+      <ToastContainer/>
     </div>
   );
 };

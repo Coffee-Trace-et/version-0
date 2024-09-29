@@ -46,6 +46,8 @@ const ProductPerformance = () => {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
 
+  const route = session?.data?.user.role === 'farmer' ? 'farmer': session?.data?.user.role === 'merchant'?"Buyer":"Admin"
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -61,7 +63,7 @@ const ProductPerformance = () => {
         const data = await response.json();
         // Assuming the response contains an array of transactions
         // console.log("datatttttttttaaaaaaa",data.data)
-        setProducts(data.data.slice(0, Math.min(data.data.length, 5))); // Take the first 5 transactions
+        setProducts(data.data?.slice(0, Math.min(data.data?.length, 5))); // Take the first 5 transactions
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -166,7 +168,7 @@ const ProductPerformance = () => {
             marginTop: "10px",
           }}
         >
-          <Link href={`/${session?.data?.user.role}/Transactions`}>
+          <Link href={`/${route}/Transactions`}>
             <Box
               sx={{
                 padding: "10px 20px",
