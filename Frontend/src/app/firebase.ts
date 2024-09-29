@@ -7,9 +7,8 @@ const firebaseConfig = {
   storageBucket: "coffeetrace-c0483.appspot.com",
   messagingSenderId: "928071929686",
   appId: "1:928071929686:web:12bfcee6f4c4b68d8950f7",
-  measurementId: "G-8KJNFMHKQR"
+  measurementId: "G-8KJNFMHKQR",
 };
 
 const app = initializeApp(firebaseConfig);
 export default app;
-
