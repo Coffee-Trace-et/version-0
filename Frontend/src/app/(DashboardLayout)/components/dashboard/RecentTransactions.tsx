@@ -1,62 +1,129 @@
-"use clinet";
+"use client";
+
 import DashboardCard from "@/app/(DashboardLayout)/components/shared/DashboardCard";
-import {
-  Timeline,
-  TimelineItem,
-  TimelineOppositeContent,
-  TimelineSeparator,
-  TimelineDot,
-  TimelineConnector,
-  TimelineContent,
-  timelineOppositeContentClasses,
-} from "@mui/lab";
-import { Link, Typography } from "@mui/material";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
 import { RecentTransactionsProps, Destination } from "@/utils/types/types";
-import { useState } from "react";
-import { time } from "console";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
-const RecentTransactions = ({ destinations }: RecentTransactionsProps) => {
-  const [role, setRole] = useState<string>("Transporter");
-  const [appdateDestinations, setAppdateDestinations] =
-    useState<Destination[]>(destinations);
+// Set up default icon for Leaflet markers
+const defaultIcon = new L.Icon({
+  iconUrl:
+    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+});
 
-  ///////////////////////////////////////
-  function updateDestinations() {
-    // Function to get the current time in hh:mm am/pm format
-    const now = new Date();
-    const hours = now.getHours() > 12 ? now.getHours() - 12 : now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const ampm = now.getHours() >= 12 ? "pm" : "am";
-    const time = `${hours}:${minutes} ${ampm}`;
+// Component to update the map's center dynamically
+function RecenterAutomatically({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.setView([lat, lng]);
+  }, [lat, lng, map]);
+  return null;
+}
 
-    // Geolocation API to get the current location
+const RecentTransactions = ({ id }: RecentTransactionsProps) => {
+  const { data: session } = useSession();
+  const [appdateDestinations, setAppdateDestinations] = useState<Destination[]>(
+    []
+  );
+  const [currentLocation, setCurrentLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  useEffect(() => {
+    // Fetch the initial destinations when the component mounts
+    const fetchPendingOrder = async () => {
+      if (!session?.accessToken) return;
+
+      try {
+        const response = await fetch(
+          "https://cofeetracebackend-2.onrender.com/api/v0/order/getmyorders",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          console.error("Failed to fetch orders", response.statusText);
+          return;
+        }
+
+        const data = await response.json();
+        const myDest = data?.data?.find(
+          (order: any) => order?.id === id
+        )?.destinations_location;
+
+        if (myDest) {
+          setAppdateDestinations(myDest as Destination[]);
+        }
+      } catch (error) {
+        console.error("Error fetching destinations:", error);
+      }
+    };
+
+    if (session) {
+      fetchPendingOrder();
+    }
+  }, [id, session]);
+
+  // Function to send updated destinations via POST request
+  async function updateDestinations() {
+    if (!session?.accessToken) return;
+
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+          const { latitude, longitude } = position.coords;
 
-          // Reverse geocoding to get the location name or fallback to coordinates
-          const locationName = await getLocationName(latitude, longitude);
+          try {
+            // Reverse geocoding to get the location name
+            const locationName = await getLocationName(latitude, longitude);
+            const content = `User is currently at ${locationName}`;
 
-          // Construct the content based on location
-          const content = `User is currently at ${locationName}`;
+            const destination: Destination = {
+              time: new Date().toISOString(),
+              content,
+              color: "blue",
+              latitude,
+              longitude,
+            };
 
-          // Define the color based on the location tracking
-          // const color = "info"; // You can set different logic if needed
+            const response = await fetch(
+              `https://cofeetracebackend-2.onrender.com/api/v0/order/driver/${id}/destinations`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${session.accessToken}`,
+                },
+                body: JSON.stringify(destination),
+              }
+            );
 
-          // Create the destination object
-          const destination: Destination = {
-            time: time,
-            content: content,
-            color: "error",
-            latitude: latitude,
-            longitude: longitude,
-          };
-
-          // Log or update the destination as needed
-
-          setAppdateDestinations([...appdateDestinations, destination]);
+            if (response.ok) {
+              setAppdateDestinations((prevDestinations) =>
+                [...prevDestinations, destination].slice(-5)
+              );
+              setCurrentLocation({ latitude, longitude }); // Set the user's current location
+            } else {
+              console.error(
+                "Failed to update destination",
+                response.statusText
+              );
+            }
+          } catch (error) {
+            console.error("Error while updating destination:", error);
+          }
         },
         (error) => {
           console.error("Error getting location: ", error);
@@ -67,108 +134,80 @@ const RecentTransactions = ({ destinations }: RecentTransactionsProps) => {
     }
   }
 
-  // Helper function to get the location name using reverse geocoding (Nominatim API)
+  // Helper function to get the location name using reverse geocoding
   async function getLocationName(latitude: number, longitude: number) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-
     try {
       const response = await fetch(url);
       const data = await response.json();
-
-      // Check if city, town, or village is available, otherwise fallback to coordinates
-      const locationName =
-        data.address.city || data.address.town || data.address.village;
-
-      // Return location name if available, otherwise return coordinates
-      return locationName
-        ? locationName
-        : `Latitude: ${latitude}, Longitude: ${longitude}`;
+      return (
+        data.address.city ||
+        data.address.town ||
+        data.address.village ||
+        `Latitude: ${latitude}, Longitude: ${longitude}`
+      );
     } catch (error) {
-      console.error("Error fetching location name: ", error);
+      console.error("Error fetching location name:", error);
       return `Latitude: ${latitude}, Longitude: ${longitude}`;
     }
   }
 
-  ///////////////////////////////////
-  function OpenInGoogleMap(latitude: number, longtude: number) {
-    const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longtude}`;
-    window.open(url, "_blank");
-  }
+  // Automatically update destinations every 5 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateDestinations();
+    }, 5 * 60 * 1000); // Every 5 minutes
 
-  ////////////////////////////////
+    return () => clearInterval(interval);
+  }, [id, session, appdateDestinations]);
+
+  const mapCenter = currentLocation
+    ? [currentLocation.latitude, currentLocation.longitude]
+    : appdateDestinations.length > 0
+    ? [appdateDestinations[0].latitude, appdateDestinations[0].longitude]
+    : [0, 0]; // Default to [0, 0] if no destinations or location available
 
   return (
-    <DashboardCard title="Recent Transactions">
-      <>
-        {role === "Transporter" && (
-          <div className="flex justify-end">
-            <button
-              onClick={updateDestinations}
-              className="border p-2 mb-2 bg-palette-primary-main text-palette-primary-light hover:bg-palette-primary-dark  hover:font-semibold rounded-md"
-            >
-              Update Destinations
-            </button>
-          </div>
-        )}
-        <Timeline
-          className="theme-timeline"
-          nonce={undefined}
-          onResize={undefined}
-          onResizeCapture={undefined}
-          sx={{
-            p: 0,
-            mb: "-40px",
-            "& .MuiTimelineConnector-root": {
-              width: "1px",
-              backgroundColor: "#efefef",
-            },
-            [`& .${timelineOppositeContentClasses.root}`]: {
-              flex: 0.5,
-              paddingLeft: 0,
-            },
-          }}
+    <DashboardCard title="Recent Destinations">
+      {/* Display Leaflet Map with the last 5 destinations */}
+      {appdateDestinations.length > 0 || currentLocation ? (
+        <MapContainer
+          center={mapCenter}
+          zoom={12}
+          scrollWheelZoom={false}
+          style={{ height: "400px", width: "100%" }}
         >
-          {appdateDestinations.map((destination, index) => (
-            <TimelineItem key={index}>
-              <TimelineOppositeContent
-                sx={{
-                  flex: 0.5,
-                  paddingLeft: 0,
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  {destination.time}
-                </Typography>
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot
-                  color={destination.color}
-                  sx={{
-                    width: "12px",
-                    height: "12px",
-                  }}
-                />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>
-                <Typography variant="body2" component="span">
-                  <span
-                    onClick={() =>
-                      OpenInGoogleMap(
-                        destination.latitude,
-                        destination.longitude
-                      )
-                    }
-                    className="cursor-pointer"
-                  >
-                    {destination.content}
-                  </span>
-                </Typography>
-              </TimelineContent>
-            </TimelineItem>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+
+          {/* Recenter the map when current location changes */}
+          {currentLocation && (
+            <RecenterAutomatically
+              lat={currentLocation.latitude}
+              lng={currentLocation.longitude}
+            />
+          )}
+
+          {/* Show destination markers */}
+          {appdateDestinations.slice(-5).map((dest, index) => (
+            <Marker
+              key={index}
+              position={[dest.latitude, dest.longitude]}
+              icon={defaultIcon}
+            >
+              <Popup>
+                <strong>{dest.content}</strong>
+                <br />
+                Time: {new Date(dest.time).toLocaleString()}
+              </Popup>
+            </Marker>
           ))}
-        </Timeline>
-      </>
+        </MapContainer>
+      ) : (
+        <p>No destinations available.</p>
+      )}
     </DashboardCard>
   );
 };

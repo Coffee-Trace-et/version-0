@@ -1,20 +1,13 @@
 interface Destination {
   time: string;
-  color:
-    | "inherit"
-    | "primary"
-    | "secondary"
-    | "error"
-    | "info"
-    | "success"
-    | "warning";
+  color: string;
   content: string;
   latitude: number;
   longitude: number;
 }
 
 interface RecentTransactionsProps {
-  destinations: Destination[];
+  id: string;
 }
 
 interface UserData {
@@ -39,12 +32,11 @@ export interface Product {
   description: string;
   price: string;
   quantity: string;
-  origin:string;
+  origin: string;
   image_url: string;
   created_at: Date;
   updated_at: Date;
   rating: number;
 }
-
 
 export type { Destination, RecentTransactionsProps, UserData };

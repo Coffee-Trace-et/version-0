@@ -78,14 +78,14 @@ const Menuitems = [
     role: "driver",
     type: "",
   },
-  {
-    id: uniqueId(),
-    title: "Products",
-    icon: FaPeopleCarryBox,
-    href: "/Transporter/Products",
-    role: "driver",
-    type: "",
-  },
+  // {
+  //   id: uniqueId(),
+  //   title: "Products",
+  //   icon: FaPeopleCarryBox,
+  //   href: "/Transporter/Products",
+  //   role: "driver",
+  //   type: "",
+  // },
   {
     id: uniqueId(),
     title: "Orders",
