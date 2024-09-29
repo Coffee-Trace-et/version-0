@@ -1,119 +1,239 @@
-'use client';
+"use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react"; // Added useRef
 import { useForm, SubmitHandler } from "react-hook-form";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 
 // Define the form data type
 interface IFormInput {
-  product_name: string;
-  description: string;
-  price: number;
-  quantity: number;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  start_location: string;
+  end_location: string;
+  image?: string; // Add image field to form input
 }
 
-const AddProduct: React.FC = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
-  const [image, setImage] = useState<File | null>(null); // To store the image file
+const AddUsers: React.FC = () => {
+  const {
+    register,
+    reset,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<IFormInput>();
 
-  // Handle the file input change
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImage(e.target.files[0]);  // Store the first selected file
+  const fileInputRef = useRef<HTMLInputElement>(null); // Corrected useRef import
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false); // Initialize uploading state
+
+  const handleImageClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = await uploadImageToCloud(file);
+      setValue("image", imageUrl); // Update form value with the image URL
+    }
+  };
+
+  const uploadImageToCloud = async (file: File): Promise<string> => {
+    const storage = getStorage(); // Make sure Firebase app instance is available here
+    const storageRef = ref(storage, file.name);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    return new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Error during upload:", error);
+          reject(error);
+        },
+        async () => {
+          try {
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            setUploadProgress(null);
+            resolve(url);
+          } catch (err) {
+            console.error("Error getting download URL:", err);
+            reject(err);
+          }
+        }
+      );
+    });
   };
 
   // Function to handle form submission
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    // Create FormData for the request
-    const formData = new FormData();
-    formData.append("product_name", data.product_name);
-    formData.append("description", data.description);
-    formData.append("price", data.price.toString());  // Convert to string
-    formData.append("quantity", data.quantity.toString());  // Convert to string
-    if (image) {
-      formData.append("image", image);  // Append the selected image file if exists
-    }
+    console.log("Form data", data);
 
-    // Call the backend API
+    setUploading(true); // Start uploading state
     try {
       const response = await fetch(
-        "https://cofeetracebackend-2.onrender.com/api/v0/product/create",
+        "https://cofeetracebackend-2.onrender.com/api/v0/user/register",
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
         }
       );
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("Product added successfully:", data);
-        // Handle success (e.g., clear form, show success message)
+        console.log("User successfully added");
+        reset(); // Reset form fields
       } else {
-        console.error("Error adding product:", response.statusText);
+        console.error("Failed to add user", await response.json());
       }
     } catch (error) {
-      console.error("Request failed:", error);
+      console.error("Error uploading file or submitting form", error);
+    } finally {
+      setUploading(false); // Reset uploading state
     }
   };
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/3 border-2 rounded-xl">
+    <div className="flex flex-col gap-2 bg-white p-3 border-2 rounded-xl">
       <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Name Field */}
         <div className="flex flex-col gap-2">
-          <label htmlFor="product_name">Product Name</label>
+          <label htmlFor="name">Name</label>
           <input
             type="text"
-            id="product_name"
-            {...register("product_name", { required: "Product Name is required" })}
-            className="p-4 border-2 border-gray-200 rounded-md outline-none"
+            id="name"
+            {...register("name", { required: "Name is required" })}
+            className="p-2 border-2 border-gray-200 rounded-md outline-none"
           />
-          {errors.product_name && <p className="text-red-500">{errors.product_name.message}</p>}
+          {errors.name && <p className="text-red-500">{errors.name.message}</p>}
         </div>
+
+        {/* Email Field */}
         <div className="flex flex-col gap-2">
-          <label htmlFor="image">Image</label>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            {...register("email", { required: "Email is required" })}
+            className="p-2 border-2 border-gray-200 rounded-md outline-none"
+          />
+          {errors.email && (
+            <p className="text-red-500">{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Password Field */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            {...register("password", { required: "Password is required" })}
+            className="p-2 border-2 border-gray-200 rounded-md outline-none"
+          />
+          {errors.password && (
+            <p className="text-red-500">{errors.password.message}</p>
+          )}
+        </div>
+
+        {/* Image Upload */}
+        {/* <div>
+          <label className="block text-sm font-medium">
+            Image <span className="text-red-500">*</span>
+          </label>
           <input
             type="file"
-            id="image"
-            onChange={handleImageChange}
-            className="p-4 border-2 border-gray-200 rounded-md outline-none"
+            ref={fileInputRef}
+            className="mt-1 block w-full text-sm p-4 border-2 border-gray-200 rounded-md outline-none text-gray-500"
+            onChange={handleFileChange}
           />
-        </div>
+          {uploadProgress !== null && (
+            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2 mb-5">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+              <p className="text-sm mt-1">
+                {Math.round(uploadProgress)}% uploaded
+              </p>
+            </div>
+          )}
+          {errors.image && (
+            <p className="text-red-500 text-sm mt-1">{errors.image.message}</p>
+          )}
+        </div> */}
+
+        {/* Role Selection */}
         <div className="flex flex-col gap-2">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            {...register("description", { required: "Description is required" })}
-            className="p-4 border-2 border-gray-200 rounded-md outline-none"
-          />
-          {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+          <label htmlFor="role">Role</label>
+          <select
+            {...register("role", { required: "Role is required" })}
+            className="p-2 border-2 border-gray-200 rounded-md outline-none"
+          >
+            <option value="admin">Admin</option>
+            <option value="Farmer">Farmer</option>
+            <option value="merchant">Buyer</option>
+            <option value="driver">Transporter</option>
+          </select>
+          {errors.role && <p className="text-red-500">{errors.role.message}</p>}
         </div>
-        <div className="flex gap-2">
-          <div className="flex flex-col w-1/2 gap-2">
-            <label htmlFor="price">Price</label>
+
+        {/* Start and End Locations */}
+        <div className="flex gap-2 md:flex-row flex-col">
+          <div className="flex flex-col w-full gap-2">
+            <label htmlFor="start_location">Start Location</label>
             <input
-              type="number"
-              id="price"
-              {...register("price", { required: "Price is required", valueAsNumber: true })}
-              className="p-4 border-2 border-gray-200 rounded-md outline-none"
+              type="text"
+              id="start_location"
+              {...register("start_location", {
+                required: "Start Location is required",
+              })}
+              className="p-2 border-2 border-gray-200 rounded-md outline-none"
             />
-            {errors.price && <p className="text-red-500">{errors.price.message}</p>}
+            {errors.start_location && (
+              <p className="text-red-500">{errors.start_location.message}</p>
+            )}
           </div>
-          <div className="flex flex-col w-1/2 gap-2">
-            <label htmlFor="quantity">Quantity</label>
+          <div className="flex flex-col w-full gap-2">
+            <label htmlFor="end_location">End Location</label>
             <input
-              type="number"
-              id="quantity"
-              {...register("quantity", { required: "Quantity is required", valueAsNumber: true })}
-              className="p-4 border-2 border-gray-200 rounded-md outline-none"
+              type="text"
+              id="end_location"
+              {...register("end_location", {
+                required: "End Location is required",
+              })}
+              className="p-2 border-2 border-gray-200 rounded-md outline-none"
             />
-            {errors.quantity && <p className="text-red-500">{errors.quantity.message}</p>}
+            {errors.end_location && (
+              <p className="text-red-500">{errors.end_location.message}</p>
+            )}
           </div>
         </div>
+
+        {/* Submit Button */}
         <div className="flex gap-2 mt-4">
           <input
             type="submit"
-            value="Add Product"
-            className="w-full p-4 border-2 bg-[#A67B5B] text-white border-gray-200 rounded-md outline-none text-center"
+            value={uploading ? "Uploading..." : "Add User"}
+            disabled={uploading}
+            className="w-full p-2 border-2 bg-[#A67B5B] text-white border-gray-200 rounded-md outline-none text-center"
           />
         </div>
       </form>
@@ -121,4 +241,4 @@ const AddProduct: React.FC = () => {
   );
 };
 
-export default AddProduct;
+export default AddUsers;
