@@ -8,7 +8,7 @@ import { Slider } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
 import { RiCloseLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
-import {Product} from "@/utils/types/types"
+import { Product } from "@/utils/types/types";
 import OrderProduct from "../../components/product/OrderProduct";
 
 const Page = () => {
@@ -23,8 +23,8 @@ const Page = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { data: session, status } = useSession();
 
-  
   // Fetch products from the API
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -40,15 +40,18 @@ const Page = () => {
         const data = await response.json();
         setProducts(data.products);
         setFilteredProducts(data.products); // Initially, display all products
+        console.log("Products fetched:", data.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [session]);
 
-  const handleAddProduct = () => {
+  const handleAddProduct = (Product: any) => {
+    setSelectedProductForOrder(Product);
+
     setOpen(!open);
   };
 
@@ -74,9 +77,12 @@ const Page = () => {
 
   const handleApplyFilters = () => {
     const filtered = products.filter((product) => {
-      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(product.origin);
-      const matchesLocation = !selectedLocation || product.origin === selectedLocation;
-      const matchesPrice = product.price >= value[0] && product.price <= value[1];
+      const matchesType =
+        selectedTypes.length === 0 || selectedTypes.includes(product.origin);
+      const matchesLocation =
+        !selectedLocation || product.origin === selectedLocation;
+      const matchesPrice =
+        product.price >= value[0] && product.price <= value[1];
       const matchesRating = rating === null || product.rating >= rating;
 
       return matchesType && matchesLocation && matchesPrice && matchesRating;
@@ -92,6 +98,15 @@ const Page = () => {
     setRating(2);
     setFilteredProducts(products); // Reset to initial products
   };
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  // handling ordering the product
+
+  const [selectedProductForOrder, setSelectedProductForOrder] =
+    useState<Product | null>(null);
+
+  ////////////////////////////////////////////////////////////////////////////////////////
 
   return (
     <div className="flex gap-5 w-full relative">
@@ -161,14 +176,18 @@ const Page = () => {
               placeholder="Min"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[0]}
-              onChange={(e) => handleChange(e as any, [Number(e.target.value), value[1]])}
+              onChange={(e) =>
+                handleChange(e as any, [Number(e.target.value), value[1]])
+              }
             />
             <input
               type="text"
               placeholder="Max"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[1]}
-              onChange={(e) => handleChange(e as any, [value[0], Number(e.target.value)])}
+              onChange={(e) =>
+                handleChange(e as any, [value[0], Number(e.target.value)])
+              }
             />
           </div>
 
@@ -213,7 +232,6 @@ const Page = () => {
       </div>
 
       <div className="w-full sm:w-4/5 overflow-hidden overflow-y-scroll max-h-[100dvh]">
-
         {open && (
           <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
             <div
@@ -222,23 +240,25 @@ const Page = () => {
             >
               <RiCloseLine />
             </div>
-            <OrderProduct />
+            <OrderProduct product={selectedProductForOrder} />
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
-          {filteredProducts.map((product, index) => (
+          {filteredProducts?.map((product, index) => (
             <div
               key={index}
               className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
-              onClick={handleAddProduct}
+              onClick={() => handleAddProduct(product)}
             >
-              <ProductCard
-                image={product.image_url || ""}
-                name={product.product_name}
-                price={`$${product.price}`}
-                amount={`${product.quantity} kg`}
-                rating={product.rating.toFixed(1)}
-              />
+              {parseInt(product.quantity, 10) > 0 && (
+                <ProductCard
+                  image={product.image_url || ""}
+                  name={product.product_name}
+                  price={`$${product.price}`}
+                  amount={`${product.quantity} kg`}
+                  rating={product.rating.toFixed(1)}
+                />
+              )}
             </div>
           ))}
         </div>

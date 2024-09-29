@@ -1,10 +1,12 @@
-'use client'
+"use client";
 import { AdUnits } from "@mui/icons-material";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { RiCloseLine } from "react-icons/ri";
 import AddProduct from "../../components/product/addProduct";
+import AddUsers from "../../components/users/addUser";
+import { useSession } from "next-auth/react";
 
 const data = [
   {
@@ -79,8 +81,10 @@ const data = [
   },
 ];
 
-const page = () => {
+const Page = () => {
+  const { data: session } = useSession();
   const [open, setOpen] = useState<boolean>(false);
+  const [users, setUsers] = useState<any[]>([]);
   const handleAddUser = () => {
     setOpen(!open);
   };
@@ -88,19 +92,38 @@ const page = () => {
     setOpen(false);
   };
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const response = await fetch(
+        "https://cofeetracebackend-2.onrender.com/api/v0/user/get-all",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.accessToken}`,
+          },
+        }
+      );
+      const data = await response.json();
+      setUsers(data.result);
+      // console.log("users ", data);
+    };
+    fetchUsers();
+  }, [session]);
+
   return (
     <section>
       {open && (
-          <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
-            <div
-              className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
-              onClick={handleCloseAddUser}
-            >
-              <RiCloseLine />
-            </div>
-            <AddProduct />
+        <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
+          <div
+            className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
+            onClick={handleCloseAddUser}
+          >
+            <RiCloseLine />
           </div>
-        )}
+          <AddUsers />
+        </div>
+      )}
       <div className="flex justify-between md:flex-row flex-col gap-2 mb-10">
         <input
           type="text"
@@ -109,8 +132,7 @@ const page = () => {
         />
         <div className="gap-2 flex md:flex-row flex-col-reverse">
           <button className="border md:w-[131px] w-full p-2 rounded-md font-semibold bg-white shadow-md">
-            <div className="flex items-center gap-1"
-            onClick={handleAddUser}>
+            <div className="flex items-center gap-1" onClick={handleAddUser}>
               <IoMdAdd className="text-black" />
               Create User
             </div>
@@ -127,7 +149,7 @@ const page = () => {
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        {data.map((item, i) => (
+        {users.map((item, i) => (
           <div
             className="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg w-[340px] border "
             key={i}
@@ -141,7 +163,7 @@ const page = () => {
             />
             <div className="flex flex-col justify-between">
               <div className="mb-2">
-                <p className="font-semibold ">{item.name}</p>
+                <p className="font-semibold capitalize">{item.name}</p>
                 <p className="text-gray-500 text-xs">{item.role}</p>
               </div>
               <div className="flex gap-6 mb-4">
@@ -174,4 +196,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
