@@ -137,15 +137,19 @@ const OrderProduct = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 md:w-1/3 border-2 rounded-xl">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="start-destination">Start Destination</label>
-        <input
-          id="start-destination"
-          type="text"
-          className="p-4 border-2 border-gray-200 rounded-md outline-none"
-        />
-      </div>
+    <div className="flex flex-col gap-4 bg-white p-2 w-4/5 sm:w-1/3 border-2 rounded-xl">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="destination">Destination</label>
+          <input
+            id="destination"
+            type="text"
+            className="p-2 border-2 border-gray-200 rounded-md outline-none"
+            {...register("destination", {
+              required: "Destination is required",
+            })}
+          />
+        </div>
 
         <div className="flex flex-col gap-2">
           <label htmlFor="quantity">Quantity</label>
