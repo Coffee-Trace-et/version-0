@@ -17,12 +17,12 @@ const Product = ({...item}:ProductCardType) => {
 
   return (
         <div className="w-full">
-          <Image
-            src={CoffeeImage}
+          <img
+            src={item.image ? item.image : CoffeeImage}
             alt="Coffee image"
             width={40}
             height={40}
-            className="w-[97%]"
+            className="w-[97%] h-44 object-cover "
           />
           <div className="text-[#939393] font-semibold text-sm py-4">
             {item.name}

@@ -11,8 +11,8 @@ import { useSession } from "next-auth/react";
 import {Product} from "@/utils/types/types"
 
 const Page = () => {
-  const [value, setValue] = useState<number[]>([20, 37]);
-  const [rating, setRating] = useState<number | null>(2);
+  const [value, setValue] = useState<number[]>([0, 100000]);
+  const [rating, setRating] = useState<number | null>(0);
   const [open, setOpen] = useState<boolean>(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -45,7 +45,7 @@ const Page = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [open]);
 
   const handleAddProduct = () => {
     setOpen(!open);
@@ -75,7 +75,7 @@ const Page = () => {
     const filtered = products.filter((product) => {
       const matchesType = selectedTypes.length === 0 || selectedTypes.includes(product.origin);
       const matchesLocation = !selectedLocation || product.origin === selectedLocation;
-      const matchesPrice = product.price >= value[0] && product.price <= value[1];
+      const matchesPrice = parseFloat(product.price) >= value[0] && parseFloat(product.price) <= value[1];
       const matchesRating = rating === null || product.rating >= rating;
 
       return matchesType && matchesLocation && matchesPrice && matchesRating;
@@ -87,8 +87,8 @@ const Page = () => {
   const handleResetFilters = () => {
     setSelectedTypes([]);
     setSelectedLocation("");
-    setValue([50, 100]);
-    setRating(2);
+    setValue([0, 100000]);
+    setRating(0);
     setFilteredProducts(products); // Reset to initial products
   };
 
@@ -130,8 +130,8 @@ const Page = () => {
             <div className="flex gap-3 w-1/2 items-center ">
               <input
                 type="checkbox"
-                onChange={() => handleTypeChange("Kafa")}
-                checked={selectedTypes.includes("Kafa")}
+                onChange={() => handleTypeChange("kafa")}
+                checked={selectedTypes.includes("kafa")}
               />
               <label htmlFor="">Kafa</label>
             </div>
@@ -146,10 +146,11 @@ const Page = () => {
           >
             <option value="">All Locations</option>
             <option value="Yirgachefe">Yirgachefe</option>
-            <option value="Harar">Harar</option>
+            <option value="harar">Harar</option>
             <option value="Sidamo">Sidamo</option>
             <option value="Jimma">Jimma</option>
             <option value="Illubabur">Illubabur</option>
+            <option value="dese">Dese</option>
           </select>
         </div>
         <div className="flex flex-col gap-3">
@@ -238,11 +239,11 @@ const Page = () => {
             >
               <RiCloseLine />
             </div>
-            <AddProduct />
+            <AddProduct setOpen={setOpen} />
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
-          {filteredProducts.map((product, index) => (
+          {filteredProducts?.map((product, index) => (
             <div
               key={index}
               className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"

@@ -2,25 +2,37 @@
 
 import React, { useRef, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useSession } from "next-auth/react";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import app from "@/app/firebase"; // Your firebase config file
+import app from "@/app/firebase";
 
-// Define the form data type
+import { toast,ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { random } from "lodash";
+
+
 interface IFormInput {
   product_name: string;
   description: string;
   price: number; // Price should be a number (float)
   quantity: number; // Quantity should be a number (float)
-  origin: number;
-  image_url: string; // For the uploaded image URL
+  origin: string;
+  image_url: string;
+  rating: string; // For the uploaded image URL
 }
 
-const AddProduct: React.FC = () => {
+interface AddProductProps {
+  setOpen: (data: boolean) => void;
+}
+
+
+const AddProduct  = ({ setOpen }: AddProductProps) => {
+  const session = useSession()
   const {
     register,
     handleSubmit,
@@ -31,11 +43,23 @@ const AddProduct: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
-  const handleImageClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const notifySuccess = () => {
+    toast.success("Product Added successfully!", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  
+    setTimeout(() => {
+      setOpen(false);
+    }, 1000); 
   };
+  const notifyError = () => toast.error("Failed to add the product.");
+
+  // const handleImageClick = () => {
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.click();
+  //   }
+  // };
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -79,9 +103,14 @@ const AddProduct: React.FC = () => {
   };
 
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
-    const accessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjZmM2JkMjRiMDliZjFmMTE4NGE1YWE1Iiwicm9sZSI6ImZhcm1lciIsIm5hbWUiOiJ0ZWtsdW1vIn0.lcr6-u5QOUtnDuSvRRkn-qtWvoXkq1pITem01OOUjuc";
-
+    const productData = { 
+      ...data, 
+      rating: Math.floor(Math.random() * 6)
+    };
+  
+    console.log("Submitted product data", productData);
+  
+    const accessToken = session?.data?.accessToken;
     try {
       const response = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/product/create",
@@ -89,25 +118,24 @@ const AddProduct: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`, // Add the Authorization header
+            Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify(data),
+          body: JSON.stringify(productData), // Send the updated product data
         }
       );
-
+  
       if (response.ok) {
-        const responseData = await response.json();
-        console.log("Product added successfully:", responseData);
-        // Handle success (e.g., clear form, show success message)
+        console.log(response)
+        notifySuccess();
       } else {
-        const errorData = await response.json();
-        console.error("Error adding product:", errorData);
+        notifyError();
       }
     } catch (error) {
-      console.error("Request failed:", error);
+      console.error("Error adding the product:", error);
+      notifyError();
     }
   };
-
+  
   return (
     <div className="flex flex-col gap-4 bg-white p-4 w-4/5 sm:w-1/2 md:w-1/3 border-2 rounded-xl">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -133,7 +161,6 @@ const AddProduct: React.FC = () => {
             id="origin"
             {...register("origin", {
               required: "origin is required",
-              valueAsNumber: true,
             })}
             className="p-4 border-2 border-gray-200 rounded-md outline-none"
           />
@@ -219,7 +246,9 @@ const AddProduct: React.FC = () => {
             value="Add Product"
             className="w-full p-4 border-2 bg-palette-primary-main text-white border-gray-200 rounded-md outline-none text-center"
           />
+          <ToastContainer/>
         </div>
+
       </form>
     </div>
   );
