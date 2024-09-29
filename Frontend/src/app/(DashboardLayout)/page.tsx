@@ -26,7 +26,7 @@ const Dashboard = () => {
                 <YearlyBreakup />
               </Grid>
               <Grid item xs={12}>
-                <MonthlyEarnings />
+                <MonthlyEarnings  title ={"Monthly Earning"}/>
               </Grid>
             </Grid>
           </Grid>
