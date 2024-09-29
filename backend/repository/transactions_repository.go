@@ -23,7 +23,7 @@ func NewTransactionRepository(database mongo.Database, collection string) domain
 
 func (r *transactionsRepository) CreateTransaction(transaction domain.Transactions) (domain.Transactions, error) {
 	transaction.ID = primitive.NewObjectID()
-	_, err := r.database.Collection(r.collection).InsertOne(context.Background(), transaction, nil)
+	_, err := r.database.Collection(r.collection).InsertOne(context.Background(), transaction)
 	if err != nil {
 		return domain.Transactions{}, err
 	}
