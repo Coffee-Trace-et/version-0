@@ -217,430 +217,133 @@ const Page = () => {
   /////////////////////////////////////////////
 
   return (
-    <section className="">
-      <div className="hidden md:flex gap-16">
-        <div className="overflow-hidden overflow-y-scroll  max-h-[100dvh]">
-          <input
-            type="text"
-            placeholder="Search shipment..."
-            className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500"
-          />
-          <h1 className="text-xl font-semibold mb-6 text-gray-700">
-            Ongoing Delivery
-          </h1>
-          {OnGoingDeliveryDB &&
-            OnGoingDeliveryDB?.map((delivery: any, i: number) => (
-              <div key={i}>
-                <div className="w-[370px] h-[374px] mb-10 ">
-                  <div className="bg-white shadow-lg border-2 border-palette-primary-main  rounded-lg p-6 w-full max-w-lg">
-                    <div className="border-b pb-4 mb-4">
-                      <div className="flex justify-between items-center mb-4">
+    <section>
+      {" "}
+      {OnGoingDeliveryDB ? (
+        <div className="">
+          <div className="hidden md:flex gap-16">
+            <div className="overflow-hidden overflow-y-scroll  max-h-[100dvh]">
+              <input
+                type="text"
+                placeholder="Search shipment..."
+                className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500"
+              />
+              <h1 className="text-xl font-semibold mb-6 text-gray-700">
+                Ongoing Delivery
+              </h1>
+              {OnGoingDeliveryDB &&
+                OnGoingDeliveryDB?.map((delivery: any, i: number) => (
+                  <div key={i}>
+                    <div className="w-[370px] h-[374px] mb-10 ">
+                      <div className="bg-white shadow-lg border-2 border-palette-primary-main  rounded-lg p-6 w-full max-w-lg">
+                        <div className="border-b pb-4 mb-4">
+                          <div className="flex justify-between items-center mb-4">
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelected(i);
+                                setOpen(true);
+                              }}
+                            >
+                              <p className="text-sm text-gray-500">
+                                Shipment number
+                              </p>
+                              <p className="text-lg font-bold text-gray-700">
+                                {delivery.shipmentNumber}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {delivery.type}
+                              </p>
+                            </div>
+                            <div>
+                              <Image
+                                src="/images/icons/buss.svg"
+                                alt="qr-code"
+                                width={100}
+                                height={100}
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  setSelected(i);
+                                  setOpen(true);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <div className="flex items-center mb-4">
+                            <MdMyLocation className="text-blue-600 text-xl" />
+                            <div className="ml-3">
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.from}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {delivery.fromRegion}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <IoLocationSharp className="text-red-500 text-xl" />
+                            <div className="ml-3">
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.to}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {delivery.toRegion}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                         <div
-                          className="cursor-pointer"
+                          className="flex items-center justify-between cursor-pointer"
                           onClick={() => {
                             setSelected(i);
                             setOpen(true);
                           }}
                         >
-                          <p className="text-sm text-gray-500">
-                            Shipment number
-                          </p>
-                          <p className="text-lg font-bold text-gray-700">
-                            {delivery.shipmentNumber}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {delivery.type}
-                          </p>
+                          <div className="flex items-center gap-4">
+                            <Image
+                              src="/images/profile/user-1.jpg"
+                              alt="profile"
+                              width={60}
+                              height={60}
+                              className="rounded-full"
+                            />
+                            <div>
+                              <p className="text-sm text-gray-500">Client</p>
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.client}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {delivery.company}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Link
+                              href={`tel:+${delivery.Phone}`}
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <FiPhone className="text-palette-primary-main    text-xl" />
+                            </Link>
+                            <Link
+                              href="http://localhost:3000/message"
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <MdMessage className="text-palette-primary-main  text-xl" />
+                            </Link>
+                          </div>
                         </div>
-                        <div>
-                          <Image
-                            src="/images/icons/buss.svg"
-                            alt="qr-code"
-                            width={100}
-                            height={100}
-                            className="cursor-pointer"
-                            onClick={() => {
-                              setSelected(i);
-                              setOpen(true);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="flex items-center mb-4">
-                        <MdMyLocation className="text-blue-600 text-xl" />
-                        <div className="ml-3">
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.from}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {delivery.fromRegion}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center">
-                        <IoLocationSharp className="text-red-500 text-xl" />
-                        <div className="ml-3">
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.to}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {delivery.toRegion}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="flex items-center justify-between cursor-pointer"
-                      onClick={() => {
-                        setSelected(i);
-                        setOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Image
-                          src="/images/profile/user-1.jpg"
-                          alt="profile"
-                          width={60}
-                          height={60}
-                          className="rounded-full"
-                        />
-                        <div>
-                          <p className="text-sm text-gray-500">Client</p>
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.client}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {delivery.company}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Link
-                          href={`tel:+${delivery.Phone}`}
-                          className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                        >
-                          <FiPhone className="text-palette-primary-main    text-xl" />
-                        </Link>
-                        <Link
-                          href="http://localhost:3000/message"
-                          className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                        >
-                          <MdMessage className="text-palette-primary-main  text-xl" />
-                        </Link>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
-        </div>
-        <div className="flex flex-col gap-6 overflow-hidden overflow-y-scroll  max-h-[100dvh]">
-          <div className="p-6  bg-white border max-h-[200px]  rounded-md shadow-md">
-            <div className="md:w-[500px] w-[380px] flex flex-col gap-4 ">
-              <h1 className="font-semibold text-lg ">Shipping Info</h1>
-              <div className="flex justify-between ">
-                <div className="w-1/3">
-                  <p className="text-gray-400">Shipment Number</p>
-                  <p className="text-gray-800 font-semibold">
-                    {OnGoingDeliveryDB &&
-                      OnGoingDeliveryDB[selected].shipmentNumber}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p className="text-gray-400">campany</p>
-                  <p className="text-gray-800 font-semibold">
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].company}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p className="text-gray-400">Type</p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].type}
-                  </p>
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <div className="w-1/3">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Quantity
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].quantity}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Weight
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].weight}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Price
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].price}
-                  </p>
-                </div>
-              </div>
+                ))}
             </div>
-          </div>
-          <div className="p-6  bg-white border max-h-[200px]  rounded-md shadow-md">
-            <div className="md:w-[500px] w-[380px] flex flex-col gap-4 ">
-              <h1 className="font-semibold text-lg ">Driver Info</h1>
-              {/* <DashboardCard title="Driver Info" /> */}
-              <div className="flex justify-between">
-                <div className="flex gap-2 items-center">
-                  <Image
-                    src="/images/profile/user-1.jpg"
-                    width={60}
-                    height={60}
-                    alt="new"
-                    className="rounded-full"
-                  />
-                  <div>
-                    <p className="text-gray-800 font-semibold">
-                      {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].driver}
-                    </p>
-                    <p className="text-gray-400">Online</p>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex gap-2">
-                    <Link
-                      href={`tel:+${
-                        OnGoingDeliveryDB && OnGoingDeliveryDB[selected].Phone
-                      }`}
-                      className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                    >
-                      <FiPhone className="text-palette-primary-main    text-xl" />
-                    </Link>
-                    <Link
-                      href="http://localhost:3000/message"
-                      className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                    >
-                      <MdMessage className="text-palette-primary-main  text-xl" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <div className="w-1/3">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Truck number
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB &&
-                      OnGoingDeliveryDB[selected].truckNumber}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Truck type
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB && OnGoingDeliveryDB[selected].truckType}
-                  </p>
-                </div>
-                <div className="w-1/3 ml-5">
-                  <p
-                    className="text-gray-400"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    Trailer number
-                  </p>
-                  <p
-                    className="text-gray-800 font-semibold"
-                    // style={{ textTransform: "capitalize" }}
-                  >
-                    {OnGoingDeliveryDB &&
-                      OnGoingDeliveryDB[selected].truckNumber}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            {OnGoingDeliveryDB && (
-              <RecentTransactions id={OnGoingDeliveryDB[selected].id} />
-            )}
-          </div>
-        </div>
-      </div>
-      <div className=" md:hidden items-center justify-center flex gap-16">
-        {!open && (
-          <div>
-            <input
-              type="text"
-              placeholder="Search shipment..."
-              className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500"
-            />
-            <h1 className="text-xl font-semibold mb-6 text-gray-700">
-              Ongoing Delivery
-            </h1>
-            {OnGoingDelivery.map((delivery, i) => (
-              <div key={i}>
-                <div className="w-[380px] h-[374px] mb-10 ">
-                  <div className="bg-white shadow-lg border-2 border-palette-primary-main  rounded-lg p-6 w-full max-w-lg">
-                    <div className="border-b pb-4 mb-4">
-                      <div className="flex justify-between items-center mb-4">
-                        <div
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setSelected(i);
-                            setOpen(true);
-                          }}
-                        >
-                          <p className="text-sm text-gray-500">
-                            Shipment number
-                          </p>
-                          <p className="text-lg font-bold text-gray-700">
-                            {delivery.shipmentNumber}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {delivery.type}
-                          </p>
-                        </div>
-                        <div>
-                          <Image
-                            src="/images/icons/buss.svg"
-                            alt="qr-code"
-                            width={100}
-                            height={100}
-                            className="cursor-pointer"
-                            onClick={() => {
-                              setSelected(i);
-                              setOpen(true);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="flex items-center mb-4">
-                        <MdMyLocation className="text-blue-600 text-xl" />
-                        <div className="ml-3">
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.from}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {delivery.fromRegion}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center">
-                        <IoLocationSharp className="text-red-500 text-xl" />
-                        <div className="ml-3">
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.to}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {delivery.toRegion}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="flex items-center justify-between cursor-pointer"
-                      onClick={() => {
-                        setSelected(i);
-                        setOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Image
-                          src="/images/profile/user-1.jpg"
-                          alt="profile"
-                          width={60}
-                          height={60}
-                          className="rounded-full"
-                        />
-                        <div>
-                          <p className="text-sm text-gray-500">Client</p>
-                          <p className="text-lg font-semibold text-gray-700">
-                            {delivery.client}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            {delivery.company}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Link
-                          href={`tel:+${delivery.Phone}`}
-                          className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                        >
-                          <FiPhone className="text-palette-primary-main    text-xl" />
-                        </Link>
-                        <Link
-                          href="http://localhost:3000/message"
-                          className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
-                        >
-                          <MdMessage className="text-palette-primary-main  text-xl" />
-                        </Link>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {open && (
-          <div>
-            <div
-              onClick={() => setOpen(false)}
-              className="cursor-pointer text-right"
-            >
-              <p className="text-palette-primary-main text-xl p-2 courser-pointer">
-                close
-              </p>
-            </div>
-            <div className="flex flex-col  gap-6 ">
-              <div className="md:p-6 p-2  bg-white border max-h-[200px]  rounded-md shadow-md">
-                <div className="md:w-[500px] w-[370px] flex flex-col gap-4 ">
+            <div className="flex flex-col gap-6 overflow-hidden overflow-y-scroll  max-h-[100dvh]">
+              <div className="p-6  bg-white border max-h-[200px]  rounded-md shadow-md">
+                <div className="md:w-[500px] w-[380px] flex flex-col gap-4 ">
                   <h1 className="font-semibold text-lg ">Shipping Info</h1>
                   <div className="flex justify-between ">
                     <div className="w-1/3">
@@ -811,10 +514,327 @@ const Page = () => {
                   <RecentTransactions id={OnGoingDeliveryDB[selected].id} />
                 )}
               </div>
-            </div>{" "}
+            </div>
           </div>
-        )}
-      </div>
+          <div className=" md:hidden items-center justify-center flex gap-16">
+            {!open && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Search shipment..."
+                  className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:border-blue-500"
+                />
+                <h1 className="text-xl font-semibold mb-6 text-gray-700">
+                  Ongoing Delivery
+                </h1>
+                {OnGoingDelivery.map((delivery, i) => (
+                  <div key={i}>
+                    <div className="w-[380px] h-[374px] mb-10 ">
+                      <div className="bg-white shadow-lg border-2 border-palette-primary-main  rounded-lg p-6 w-full max-w-lg">
+                        <div className="border-b pb-4 mb-4">
+                          <div className="flex justify-between items-center mb-4">
+                            <div
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelected(i);
+                                setOpen(true);
+                              }}
+                            >
+                              <p className="text-sm text-gray-500">
+                                Shipment number
+                              </p>
+                              <p className="text-lg font-bold text-gray-700">
+                                {delivery.shipmentNumber}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {delivery.type}
+                              </p>
+                            </div>
+                            <div>
+                              <Image
+                                src="/images/icons/buss.svg"
+                                alt="qr-code"
+                                width={100}
+                                height={100}
+                                className="cursor-pointer"
+                                onClick={() => {
+                                  setSelected(i);
+                                  setOpen(true);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mb-6">
+                          <div className="flex items-center mb-4">
+                            <MdMyLocation className="text-blue-600 text-xl" />
+                            <div className="ml-3">
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.from}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {delivery.fromRegion}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <IoLocationSharp className="text-red-500 text-xl" />
+                            <div className="ml-3">
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.to}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {delivery.toRegion}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => {
+                            setSelected(i);
+                            setOpen(true);
+                          }}
+                        >
+                          <div className="flex items-center gap-4">
+                            <Image
+                              src="/images/profile/user-1.jpg"
+                              alt="profile"
+                              width={60}
+                              height={60}
+                              className="rounded-full"
+                            />
+                            <div>
+                              <p className="text-sm text-gray-500">Client</p>
+                              <p className="text-lg font-semibold text-gray-700">
+                                {delivery.client}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                {delivery.company}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Link
+                              href={`tel:+${delivery.Phone}`}
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <FiPhone className="text-palette-primary-main    text-xl" />
+                            </Link>
+                            <Link
+                              href="http://localhost:3000/message"
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <MdMessage className="text-palette-primary-main  text-xl" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {open && (
+              <div>
+                <div
+                  onClick={() => setOpen(false)}
+                  className="cursor-pointer text-right"
+                >
+                  <p className="text-palette-primary-main text-xl p-2 courser-pointer">
+                    close
+                  </p>
+                </div>
+                <div className="flex flex-col  gap-6 ">
+                  <div className="md:p-6 p-2  bg-white border max-h-[200px]  rounded-md shadow-md">
+                    <div className="md:w-[500px] w-[370px] flex flex-col gap-4 ">
+                      <h1 className="font-semibold text-lg ">Shipping Info</h1>
+                      <div className="flex justify-between ">
+                        <div className="w-1/3">
+                          <p className="text-gray-400">Shipment Number</p>
+                          <p className="text-gray-800 font-semibold">
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].shipmentNumber}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p className="text-gray-400">campany</p>
+                          <p className="text-gray-800 font-semibold">
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].company}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p className="text-gray-400">Type</p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].type}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="w-1/3">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Quantity
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].quantity}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Weight
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].weight}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Price
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].price}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6  bg-white border max-h-[200px]  rounded-md shadow-md">
+                    <div className="md:w-[500px] w-[380px] flex flex-col gap-4 ">
+                      <h1 className="font-semibold text-lg ">Driver Info</h1>
+                      {/* <DashboardCard title="Driver Info" /> */}
+                      <div className="flex justify-between">
+                        <div className="flex gap-2 items-center">
+                          <Image
+                            src="/images/profile/user-1.jpg"
+                            width={60}
+                            height={60}
+                            alt="new"
+                            className="rounded-full"
+                          />
+                          <div>
+                            <p className="text-gray-800 font-semibold">
+                              {OnGoingDeliveryDB &&
+                                OnGoingDeliveryDB[selected].driver}
+                            </p>
+                            <p className="text-gray-400">Online</p>
+                          </div>
+                        </div>
+                        <div>
+                          <div className="flex gap-2">
+                            <Link
+                              href={`tel:+${
+                                OnGoingDeliveryDB &&
+                                OnGoingDeliveryDB[selected].Phone
+                              }`}
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <FiPhone className="text-palette-primary-main    text-xl" />
+                            </Link>
+                            <Link
+                              href="http://localhost:3000/message"
+                              className="bg-palette-secondary-light cursor-pointer text-white rounded-md p-2"
+                            >
+                              <MdMessage className="text-palette-primary-main  text-xl" />
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="w-1/3">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Truck number
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].truckNumber}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Truck type
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].truckType}
+                          </p>
+                        </div>
+                        <div className="w-1/3 ml-5">
+                          <p
+                            className="text-gray-400"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            Trailer number
+                          </p>
+                          <p
+                            className="text-gray-800 font-semibold"
+                            // style={{ textTransform: "capitalize" }}
+                          >
+                            {OnGoingDeliveryDB &&
+                              OnGoingDeliveryDB[selected].truckNumber}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    {OnGoingDeliveryDB && (
+                      <RecentTransactions id={OnGoingDeliveryDB[selected].id} />
+                    )}
+                  </div>
+                </div>{" "}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <h1
+          className="text-center text-2xl font-semibold text-gray-700"
+          style={{ marginTop: "10rem" }}
+        >
+          No Ongoing Delivery
+        </h1>
+      )}
     </section>
   );
 };
