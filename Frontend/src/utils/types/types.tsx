@@ -7,7 +7,7 @@ interface Destination {
 }
 
 interface RecentTransactionsProps {
-  id: string;
+  id: Destination[];
 }
 
 interface UserData {
