@@ -1,12 +1,16 @@
 "use client";
 import React, { FC } from "react";
+
+interface SidebarItemsProps {
+  toggleMobileSidebar: () => void;
+}
 import Menuitems from "./MenuItems";
 import { usePathname, useRouter } from "next/navigation"; // Import useRouter for redirect
 import { Box, List } from "@mui/material";
 import NavItem from "./NavItem";
 import { useSession } from "next-auth/react";
 
-const SidebarItems: FC<SidebarItemsProps> = ({ toggleMobileSidebar }) => {
+const SidebarItems = () => {
   const pathname = usePathname();
   const router = useRouter(); // Initialize router for redirect
   const pathDirect = pathname;
@@ -33,7 +37,7 @@ const SidebarItems: FC<SidebarItemsProps> = ({ toggleMobileSidebar }) => {
                 item={item}
                 key={item.id}
                 pathDirect={pathDirect}
-                onClick={toggleMobileSidebar}
+                // onClick={toggleMobileSidebar}
               />
             );
           }

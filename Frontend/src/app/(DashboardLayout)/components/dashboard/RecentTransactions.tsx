@@ -37,48 +37,64 @@ const RecentTransactions = ({ id }: RecentTransactionsProps) => {
   } | null>(null);
 
   useEffect(() => {
-    // Fetch the initial destinations when the component mounts
-    const fetchPendingOrder = async () => {
-      if (!session?.accessToken) return;
+    // Ensure this code only runs on the client-side
+    if (typeof window !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
 
-      try {
-        const response = await fetch(
-          "https://cofeetracebackend-2.onrender.com/api/v0/order/getmyorders",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${session.accessToken}`,
-            },
+          try {
+            // Reverse geocoding to get the location name
+            const locationName = await getLocationName(latitude, longitude);
+            const content = `User is currently at ${locationName}`;
+
+            const destination: Destination = {
+              time: new Date().toISOString(),
+              content,
+              color: "blue",
+              latitude,
+              longitude,
+            };
+
+            const response = await fetch(
+              `https://cofeetracebackend-2.onrender.com/api/v0/order/driver/${id}/destinations`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${session?.accessToken}`,
+                },
+                body: JSON.stringify(destination),
+              }
+            );
+
+            if (response.ok) {
+              setAppdateDestinations((prevDestinations) =>
+                [...prevDestinations, destination].slice(-5)
+              );
+              setCurrentLocation({ latitude, longitude }); // Set the user's current location
+            } else {
+              console.error(
+                "Failed to update destination",
+                response.statusText
+              );
+            }
+          } catch (error) {
+            console.error("Error while updating destination:", error);
           }
-        );
-
-        if (!response.ok) {
-          console.error("Failed to fetch orders", response.statusText);
-          return;
+        },
+        (error) => {
+          console.error("Error getting location: ", error);
         }
-
-        const data = await response.json();
-        const myDest = data?.data?.find(
-          (order: any) => order?.id === id
-        )?.destinations_location;
-
-        if (myDest) {
-          setAppdateDestinations(myDest as Destination[]);
-        }
-      } catch (error) {
-        console.error("Error fetching destinations:", error);
-      }
-    };
-
-    if (session) {
-      fetchPendingOrder();
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
     }
   }, [id, session]);
 
   // Function to send updated destinations via POST request
   async function updateDestinations() {
-    if (!session?.accessToken) return;
+    if (typeof window === "undefined" || !session?.accessToken) return;
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -161,11 +177,11 @@ const RecentTransactions = ({ id }: RecentTransactionsProps) => {
     return () => clearInterval(interval);
   }, [id, session, appdateDestinations]);
 
-  const mapCenter = currentLocation
+  const mapCenter: [number, number] = currentLocation
     ? [currentLocation.latitude, currentLocation.longitude]
     : appdateDestinations.length > 0
     ? [appdateDestinations[0].latitude, appdateDestinations[0].longitude]
-    : [0, 0]; // Default to [0, 0] if no destinations or location available
+    : [0, 0]; // Ensure it's always [number, number]
 
   return (
     <DashboardCard title="Recent Destinations">
