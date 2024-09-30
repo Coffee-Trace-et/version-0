@@ -169,7 +169,7 @@ const ItemDescription = ({ description }: Discription) => {
 //   );
 // };
 
-const page = () => {
+const Page = () => {
   const [activeTab, setActiveTab] = useState("discussion");
   const [open, setOpen] = useState<boolean>(false);
   const [blog, setBlog] = useState<Blog[]>();
@@ -326,14 +326,16 @@ const page = () => {
               </div>
               <div className="flex gap-6">
                 {items.tags.map((tag, index) => (
-                  <button className="px-5 py-2 rounded-full  bg-[#cdcdcd23]">
+                  <button
+                    key={index}
+                    className="px-5 py-2 rounded-full  bg-[#cdcdcd23]"
+                  >
                     {tag}
                   </button>
                 ))}
               </div>
               <div className="flex w-full">
-                <div className="flex gap-3 items-center">
-                </div>
+                <div className="flex gap-3 items-center"></div>
                 <ItemReplay id={items.id} />
               </div>
             </div>
@@ -377,7 +379,10 @@ const page = () => {
           <div>
             <div className="flex flex-wrap gap-4 ">
               {sugestion.map((items, index) => (
-                <button className="px-5 py-2 rounded-full  bg-[#cdcdcd23]">
+                <button
+                  key={index}
+                  className="px-5 py-2 rounded-full  bg-[#cdcdcd23]"
+                >
                   {items.tag}
                 </button>
               ))}
@@ -400,4 +405,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
