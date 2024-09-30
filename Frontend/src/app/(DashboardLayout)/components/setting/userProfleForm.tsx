@@ -19,12 +19,12 @@ interface SettingInputType {
   email: string;
   password: string;
   role: string;
-  phoneNumber: string;
+  phone_number: string;
   address: string;
   image: string;
-  orderConfirmation: boolean;
-  orderStatusConfirmation: boolean;
-  emailNotification: boolean;
+  order_confirmation: boolean;
+  order_status: boolean;
+  email_notification: boolean;
 }
 
 interface UserProfileFormProps {
@@ -46,14 +46,14 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
     defaultValues: {
       name: user.name || "",
       email: user.email || "",
-      password: "",
+      password: user.password,
       role: user.role || "",
-      phoneNumber: user.phoneNumber || "",
+      phone_number: user.phone_number || "",
       address: user.address || "",
       image: user.image || "",
-      orderConfirmation: user.orderConfirmation || false,
-      orderStatusConfirmation: user.orderStatusConfirmation || false,
-      emailNotification: user.emailNotification || false,
+      order_confirmation: user.order_confirmation || false,
+      order_status: user.order_status || false,
+      email_notification: user.email_notification || false,
     },
   });
 
@@ -90,14 +90,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
       );
     });
   };
-
-  const notifySuccess = () => {
-    toast.success("Profile updated successfully!", {
-      position: "top-right",
-      autoClose: 1000,
-    });
-  };
-  const notifyError = () => toast.error("Failed to update.");
+  
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -111,6 +104,13 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
       }
     }
   };
+  const notifySuccess = () => {
+    toast.success("Profile updated successfully!", {
+      position: "top-right",
+      autoClose: 1000,
+    });
+  };
+  const notifyError = () => toast.error("Failed to update.");
 
   const onSubmit: SubmitHandler<SettingInputType> = async (data) => {
     console.log("Submitted data:", data,session?.accessToken);
@@ -199,12 +199,12 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
               <label>Phone</label>
               <input
                 type="text"
-                defaultValue={user.phoneNumber}
-                {...register("phoneNumber")}
+                defaultValue={user.phone_number}
+                {...register("phone_number")}
                 className="p-4 border-2 border-gray-200 rounded-md outline-none"
               />
-              {errors.phoneNumber && (
-                <p className="text-red-500">{errors.phoneNumber.message}</p>
+              {errors.phone_number && (
+                <p className="text-red-500">{errors.phone_number.message}</p>
               )}
             </div>
 
@@ -238,11 +238,11 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
               </div>
               <div className="w-1/5">
                 <Controller
-                  name="orderConfirmation"
+                  name="order_confirmation"
                   control={control}
                   render={({ field }) => (
                     <SwitchButton
-                      isOn={user.orderConfirmation}
+                      isOn={user.order_confirmation}
                       onToggle={field.onChange}
                     />
                   )}
@@ -260,11 +260,11 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
               </div>
               <div className="w-1/5">
                 <Controller
-                  name="orderStatusConfirmation"
+                  name="order_status"
                   control={control}
                   render={({ field }) => (
                     <SwitchButton
-                      isOn={user.orderStatusConfirmation}
+                      isOn={user.order_status}
                       onToggle={field.onChange}
                     />
                   )}
@@ -282,11 +282,11 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
               </div>
               <div className="w-1/5">
                 <Controller
-                  name="emailNotification"
+                  name="email_notification"
                   control={control}
                   render={({ field }) => (
                     <SwitchButton
-                      isOn={user.emailNotification}
+                      isOn={user.email_notification}
                       onToggle={field.onChange}
                     />
                   )}
@@ -300,7 +300,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
       <div className="flex justify-end mt-5">
         <button
           type="submit"
-          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+          className="px-4 py-2 bg-palette-primary-main text-white rounded-md"
         >
           Save Changes
         </button>
