@@ -113,7 +113,7 @@ const UserProfileForm: React.FC<UserProfileFormProps> = ({ user }) => {
   };
 
   const onSubmit: SubmitHandler<SettingInputType> = async (data) => {
-    console.log("Submitted data:", data);
+    console.log("Submitted data:", data,session?.accessToken);
 
     try {
       const response = await fetch(

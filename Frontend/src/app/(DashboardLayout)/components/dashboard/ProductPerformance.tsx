@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Box,
@@ -6,149 +7,158 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Chip,
+  useTheme,
 } from "@mui/material";
 import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardCard";
 import { MdOutlineShoppingBag } from "react-icons/md";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
-const products = [
-  {
-    Type: "Yirgacheffe",
-    BuyerName: "Abebe Kebede",
-    Date: "17 May, 2024",
-    Quantity: "500 kg",
-    budget: "3.9",
-  },
-  {
-    Type: "Yirgacheffe",
-    BuyerName: "Alemitu Shakiso",
-    Date: "21 Jan,2024",
-    Quantity: "400 kg",
-    budget: "30.85",
-  },
-  {
-    Type: "Yirgacheffe",
-    BuyerName: "Mohamed Ali",
-    Date: "18 Jan,2024",
-    Quantity: "1000 kg",
-    budget: "60.00",
-  },
-  {
-    Type: "Yirgacheffe",
-    BuyerName: "Wasihun Wondimu",
-    Date: "18 Jan,2024",
-    Quantity: "1000 kg",
-    budget: "58.00",
-  },
-];
+interface Transaction {
+  id: string;
+  amount: number; // Ensure this is a number
+  description: string;
+  order_id: string;
+  farmer_id: string;
+  farmer_name: string;
+  merchant_id: string;
+  merchant_name: string;
+  quantity: number;
+  total_price: number; // Adding total_price to interface
+  datetime: string;
+}
+
+function formatDate(dateString: string): string {
+  const datePart = dateString.split(" ")[0];
+  const date = new Date(datePart);
+
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
 const ProductPerformance = () => {
+  const [products, setProducts] = useState<Transaction[]>([]);
+  const session = useSession();
+
+  const theme = useTheme();
+  const primary = theme.palette.primary.main;
+
+  const route = session?.data?.user.role === 'farmer' ? 'farmer': session?.data?.user.role === 'merchant'?"Buyer":"Admin"
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(
+          "https://cofeetracebackend-2.onrender.com/api/v0/transaction/getmytransactions",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${session?.data?.accessToken}`,
+            },
+          }
+        );
+        const data = await response.json();
+        // Assuming the response contains an array of transactions
+        // console.log("datatttttttttaaaaaaa",data.data)
+        setProducts(data.data?.slice(0, Math.min(data.data?.length, 5))); // Take the first 5 transactions
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, [session]);
+
   return (
-    <DashboardCard title="Recent Transaction">
-        <Box>
-
-      <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
-        <Table
-          aria-label="simple table"
-          sx={{
-            whiteSpace: "nowrap",
-            mt: 2,
-          }}
-        >
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Type
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Buyer Name
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Date
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Quantity
-                </Typography>
-              </TableCell>
-              <TableCell align="right">
-                <Typography variant="subtitle2" fontWeight={800}>
-                  Amount
-                </Typography>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.BuyerName}>
+    <DashboardCard title="Recent Transactions">
+      <Box>
+        <Box sx={{ overflow: "auto", width: { xs: "280px", sm: "auto" } }}>
+          <Table
+            aria-label="simple table"
+            sx={{
+              whiteSpace: "nowrap",
+              mt: 2,
+            }}
+          >
+            <TableHead>
+              <TableRow>
                 <TableCell>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <MdOutlineShoppingBag
-                      style={{ fontSize: "24px", marginRight: "8px" }}
-                    />
-                    <Typography
-                      sx={{
-                        fontSize: "15px",
-                        fontWeight: "500",
-                      }}
-                    >
-                      {product.Type}
-                    </Typography>
-                  </Box>
-                </TableCell>
-
-                <TableCell>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="subtitle2" fontWeight={600}>
-                        {product.BuyerName}
-                      </Typography>
-                      {/* <Typography
-                                                color="textSecondary"
-                                                sx={{
-                                                    fontSize: "13px",
-                                                }}
-                                            >
-                                                {product.post}
-                                            </Typography> */}
-                    </Box>
-                  </Box>
-                </TableCell>
-                <TableCell>
-                  <Typography
-                    color="textSecondary"
-                    variant="subtitle2"
-                    fontWeight={400}
-                  >
-                    {product.Date}
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Transaction ID
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">{product.Quantity}</Typography>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Buyer Name
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Date
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Quantity
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">${product.budget}k</Typography>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Amount
+                  </Typography>
+                </TableCell>
+                <TableCell align="right">
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    Total Price
+                  </Typography>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {products?.map((transaction: Transaction) => (
+                <TableRow key={transaction.id}>
+                  <TableCell>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <MdOutlineShoppingBag
+                        style={{ fontSize: "24px", marginRight: "8px" }}
+                      />
+                      <Typography variant="subtitle2">
+                        {transaction.id}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="subtitle2">
+                      {transaction.merchant_name}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography color="textSecondary" variant="subtitle2">
+                      {formatDate(transaction.datetime)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h6">
+                      {transaction.quantity} kg
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="h6">
+                      ${transaction.amount} k
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Typography variant="h6">
+                      ${transaction.total_price} k
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Box>
         <Box
           sx={{
@@ -158,19 +168,21 @@ const ProductPerformance = () => {
             marginTop: "10px",
           }}
         >
-          <Box
-          sx={{
-            padding: "10px 20px",
-            backgroundColor: "#A67B5B",
-            color: "white",
-            borderRadius: "5px",
-          }}
-          >
-            Load More
-          </Box>
+          <Link href={`/${route}/Transactions`}>
+            <Box
+              sx={{
+                padding: "10px 20px",
+                backgroundColor: [primary],
+                color: "white",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Load More
+            </Box>
+          </Link>
         </Box>
-        </Box>
-
+      </Box>
     </DashboardCard>
   );
 };
