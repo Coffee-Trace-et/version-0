@@ -57,7 +57,6 @@ const ItemDescription = ({ description }: Discription) => {
   );
 };
 
-// const ItemReplay = ({ id }: ItemsReplay) => {
 //   const session = useSession();
 //   const [isExpanded, setIsExpanded] = useState(true);
 //   const [replay, setReplay] = useState<Replay[]>();
@@ -208,46 +207,6 @@ const Page = () => {
       tag: "System-update",
     },
   ];
-  // const blog = [
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     createdAt: "2 day ago",
-  //   },
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     views: "875",
-  //     createdAt: "2 day ago",
-  //   },
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     views: "875",
-  //     createdAt: "2 day ago",
-  //   },
-  // ];
 
   useEffect(() => {
     const fetchBlogs = async () => {

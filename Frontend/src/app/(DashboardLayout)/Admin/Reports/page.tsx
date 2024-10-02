@@ -155,7 +155,7 @@ const page = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-5">
                   <Image
-                    src={items?.image}
+                    src={items?.image || "/images/profile/user-2.svg"}
                     alt={items.name}
                     width={48}
                     height={48}
