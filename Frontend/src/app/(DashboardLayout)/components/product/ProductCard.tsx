@@ -43,9 +43,9 @@ const Product = ({ ...item }: ProductCardType) => {
       {session.data?.user.role.toLowerCase() === "admin" && (
         <div className="w-full flex justify-between mt-4 ">
           <div className="flex gap-4">
-              <button className=" bg-gray-200 w-[94px] h-[32px] text-gray-500 rounded-md hover:bg-gray-600 hover:text-white">
-                Warn
-              </button>
+            <button className=" bg-gray-200 w-[94px] h-[32px] text-gray-500 rounded-md hover:bg-gray-600 hover:text-white">
+              Warn
+            </button>
             <button className=" bg-red-500 w-[94px] h-[32px] text-white rounded-md hover:bg-red-600">
               Delete
             </button>

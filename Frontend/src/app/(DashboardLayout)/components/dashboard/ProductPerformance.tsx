@@ -13,6 +13,7 @@ import DashboardCard from "@/app/(DashboardLayout)//components/shared/DashboardC
 import { MdOutlineShoppingBag } from "react-icons/md";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Loader from "@/app/(DashboardLayout)/components/Loder/Loder";
 
 interface Transaction {
   id: string;
@@ -41,12 +42,18 @@ function formatDate(dateString: string): string {
 
 const ProductPerformance = () => {
   const [products, setProducts] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(false);
   const session = useSession();
 
   const theme = useTheme();
   const primary = theme.palette.primary.main;
 
-  const route = session?.data?.user.role === 'farmer' ? 'farmer': session?.data?.user.role === 'merchant'?"Buyer":"Admin"
+  const route =
+    session?.data?.user.role === "farmer"
+      ? "farmer"
+      : session?.data?.user.role === "merchant"
+      ? "Buyer"
+      : "Admin";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -117,47 +124,53 @@ const ProductPerformance = () => {
                 </TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              {products?.map((transaction: Transaction) => (
-                <TableRow key={transaction.id}>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <MdOutlineShoppingBag
-                        style={{ fontSize: "24px", marginRight: "8px" }}
-                      />
+            {!(loading || session.status === "loading") ? (
+              <TableBody>
+                {products?.map((transaction: Transaction) => (
+                  <TableRow key={transaction.id}>
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <MdOutlineShoppingBag
+                          style={{ fontSize: "24px", marginRight: "8px" }}
+                        />
+                        <Typography variant="subtitle2">
+                          {transaction.id}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
                       <Typography variant="subtitle2">
-                        {transaction.id}
+                        {transaction.merchant_name}
                       </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="subtitle2">
-                      {transaction.merchant_name}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography color="textSecondary" variant="subtitle2">
-                      {formatDate(transaction.datetime)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="h6">
-                      {transaction.quantity} kg
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="h6">
-                      ${transaction.amount} k
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="right">
-                    <Typography variant="h6">
-                      ${transaction.total_price} k
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
+                    </TableCell>
+                    <TableCell>
+                      <Typography color="textSecondary" variant="subtitle2">
+                        {formatDate(transaction.datetime)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="h6">
+                        {transaction.quantity} kg
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">
+                        ${transaction.amount} k
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="h6">
+                        ${transaction.total_price} k
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            ) : (
+              <div className="flex item-center justify-center mt-10">
+                <Loader />;
+              </div>
+            )}
           </Table>
         </Box>
         <Box

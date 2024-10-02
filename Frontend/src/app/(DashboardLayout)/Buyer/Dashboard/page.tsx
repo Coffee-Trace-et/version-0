@@ -10,8 +10,10 @@ import Blog from "@/app/(DashboardLayout)/components/dashboard/Blog";
 import MonthlyEarnings from "@/app/(DashboardLayout)/components/dashboard/MonthlyEarnings";
 import UserAvatar from "@/app/(serverSide)/session";
 import { useSession } from "next-auth/react";
+import Loader from "@/app/(DashboardLayout)/components/Loder/Loder";
 const Dashboard = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
   console.log("session teklumo", session);
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
@@ -26,7 +28,7 @@ const Dashboard = () => {
                 <YearlyBreakup />
               </Grid>
               <Grid item xs={12}>
-                <MonthlyEarnings  title ={"Monthly expense"}/>
+                <MonthlyEarnings title={"Monthly expense"} />
               </Grid>
             </Grid>
           </Grid>
