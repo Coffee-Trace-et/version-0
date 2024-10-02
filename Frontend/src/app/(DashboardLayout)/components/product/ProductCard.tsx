@@ -13,32 +13,31 @@ interface ProductCardType {
   rating: string;
 }
 
-const Product = ({...item}:ProductCardType) => {
-
+const Product = ({ ...item }: ProductCardType) => {
   return (
-        <div className="w-full">
-          <img
-            src={item.image ? item.image : CoffeeImage}
-            alt="Coffee image"
-            width={40}
-            height={40}
-            className="w-[97%] h-44 object-cover "
-          />
-          <div className="text-[#939393] font-semibold text-sm py-4">
-            {item.name}
-          </div>
-          <div className="flex justify-between w-full">
-            <div className="flex items-center justify-start gap-2  text-sm">
-              <p className="font-semibold">{item.price}</p>
-              <p>|</p>
-              <p>{item.amount}</p>
-            </div>
-            <div className="flex gap-2 items-center justify-start ">
-              <FaStar className="text-[#F3C63F]" />
-              <p>{item.rating}</p>
-            </div>
-          </div>
+    <div className="w-full">
+      <img
+        src={item.image ? item.image : CoffeeImage}
+        alt="Coffee image"
+        width={40}
+        height={40}
+        className="w-[97%] h-44 object-cover rounded-md"
+      />
+      <div className="text-[#939393] font-semibold text-sm py-4">
+        {item.name}
+      </div>
+      <div className="flex justify-between w-full">
+        <div className="flex items-center justify-start gap-2  text-sm">
+          <p className="font-semibold">{item.price}</p>
+          <p>|</p>
+          <p>{item.amount}</p>
         </div>
+        <div className="flex gap-2 items-center justify-start ">
+          <FaStar className="text-[#F3C63F]" />
+          <p>{item.rating}</p>
+        </div>
+      </div>
+    </div>
   );
 };
 
