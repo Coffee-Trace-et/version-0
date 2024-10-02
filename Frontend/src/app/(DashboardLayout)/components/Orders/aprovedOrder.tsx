@@ -3,9 +3,11 @@ import { TbMoneybag } from "react-icons/tb";
 import { useState, useEffect } from "react";
 import { FaLessThan, FaGreaterThan } from "react-icons/fa6";
 import { useSession } from "next-auth/react";
+import Loader from "../Loder/Loder";
 
 const ApprovedOrder = () => {
-  const { data: session } = useSession();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { data: session, status } = useSession();
   // const approved = [
   //   {
   //     icon: <TbMoneybag />,
@@ -74,6 +76,7 @@ const ApprovedOrder = () => {
 
   useEffect(() => {
     const fetchPendingOrder = async () => {
+      setLoading(true);
       const response = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/order/getmyorders",
         {
@@ -119,6 +122,7 @@ const ApprovedOrder = () => {
 
       console.log("approved", data);
       setPendingOrder(data);
+      setLoading(false);
     };
     fetchPendingOrder();
   }, [session]);
@@ -219,125 +223,136 @@ const ApprovedOrder = () => {
         Approved Orders
       </h1>
 
-      <div className="flex flex-col gap-5 w-full">
-        <div className="flex flex-col gap-6 w-full">
-          {getPagedData().map((items: any, index: number) => (
-            <div
-              key={index}
-              className="flex flex-col gap-7 md:flex-row md:gap-4  py-4 px-5 border border-gray-200 rounded-xl shadow-md"
-            >
-              <div className="flex items-center gap-4 w-full md:w-1/4">
-                <div
-                  className={`text-3xl ${
-                    items?.bg || "bg-lime-200"
-                  } rounded-2xl p-3 md:p-4`}
-                >
-                  {items?.icon || <TbMoneybag />}
-                </div>
-                <div className="flex flex-col capitalize text-lg">
-                  <p>{items.farmer_name}</p>
-                  <p className="text-sm text-[#718EBF]"> {items.order_type}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 md:w-3/5">
-                <div className="flex items-center gap-4 w-full md:w-1/3">
-                  <div className="flex flex-col text-lg font-semibold">
-                    <p>{items.order_type}</p>
-                    <p className="text-sm text-[#718EBF]">{items.quantity}</p>
-                  </div>
-                </div>
+      {!(loading || status === "loading") ? (
+        <div className="flex flex-col gap-5 w-full">
+          <div className="flex flex-col gap-6 w-full">
+            {getPagedData().map((items: any, index: number) => (
+              <div
+                key={index}
+                className="flex flex-col gap-7 md:flex-row md:gap-4  py-4 px-5 border border-gray-200 rounded-xl shadow-md"
+              >
                 <div className="flex items-center gap-4 w-full md:w-1/4">
-                  <div className="flex flex-col text-lg font-semibold">
-                    <p>Total Price</p>
+                  <div
+                    className={`text-3xl ${
+                      items?.bg || "bg-lime-200"
+                    } rounded-2xl p-3 md:p-4`}
+                  >
+                    {items?.icon || <TbMoneybag />}
+                  </div>
+                  <div className="flex flex-col capitalize text-lg">
+                    <p>{items.farmer_name}</p>
                     <p className="text-sm text-[#718EBF]">
-                      {items.total_price}
+                      {" "}
+                      {items.order_type}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 w-full md:w-1/3">
-                  <div className="flex flex-col text-lg font-semibold">
-                    <p>Shipping Status</p>
-                    <p
-                      className={`text-sm ${
-                        items.shipping_status.toLowerCase() === "picked"
-                          ? "text-green-500"
-                          : "text-yellow-500"
-                      }`}
-                    >
-                      {items.shipping_status}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {session?.user.role == "merchant" ? (
-                <div className="flex items-center justify-center gap-4 w-full md:w-1/4">
-                  {items.farmer_payment_status.toLowerCase() === "pending" && (
-                    <button
-                      className="py-2 px-5 border hover:border-palette-primary-main border-b-gray-200 rounded-full text-palette-primary-main"
-                      onClick={() => handlePayFarmer(items.id)}
-                    >
-                      Pay Farmer
-                    </button>
-                  )}
 
-                  {items.driver_payment_status.toLowerCase() === "pending" && (
-                    <button
-                      className="py-2 px-5 border hover:border-palette-primary-main border-b-gray-200 rounded-full text-palette-primary-main"
-                      onClick={() => handlePayDriver(items.id)}
-                    >
-                      Pay Driver
-                    </button>
-                  )}
+                <div className="flex gap-4 md:w-3/5">
+                  <div className="flex items-center gap-4 w-full md:w-1/3">
+                    <div className="flex flex-col text-lg font-semibold">
+                      <p>{items.order_type}</p>
+                      <p className="text-sm text-[#718EBF]">{items.quantity}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 w-full md:w-1/4">
+                    <div className="flex flex-col text-lg font-semibold">
+                      <p>Total Price</p>
+                      <p className="text-sm text-[#718EBF]">
+                        {items.total_price}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 w-full md:w-1/3">
+                    <div className="flex flex-col text-lg font-semibold">
+                      <p>Shipping Status</p>
+                      <p
+                        className={`text-sm ${
+                          items.shipping_status.toLowerCase() === "picked"
+                            ? "text-green-500"
+                            : "text-yellow-500"
+                        }`}
+                      >
+                        {items.shipping_status}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <>
-                  {session?.user?.role == "driver" ? (
-                    <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
+                {session?.user.role == "merchant" ? (
+                  <div className="flex items-center justify-center gap-4 w-full md:w-1/4">
+                    {items.farmer_payment_status.toLowerCase() ===
+                      "pending" && (
                       <button
                         className="py-2 px-5 border hover:border-palette-primary-main border-b-gray-200 rounded-full text-palette-primary-main"
-                        onClick={() => handlePickOrder(items.id)}
-                        disabled={
-                          items?.order_status_farmer?.toLowerCase() !==
-                          "accepted"
-                        }
+                        onClick={() => handlePayFarmer(items.id)}
                       >
-                        Pick Order
+                        Pay Farmer
                       </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
-                      <button className="py-2 px-5 border border-b-gray-200 rounded-full text-[#FFBB38]">
-                        Pending
-                      </button>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+                    )}
 
-        <div className="w-full flex justify-center items-center mt-4">
-          <div className="flex justify-center items-center p-4">
-            <button
-              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
-              onClick={handlePrevPage}
-              disabled={currentPage === 1}
-            >
-              <FaLessThan /> Previous
-            </button>
-            <div>{renderPageButtons()}</div>
-            <button
-              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
-              onClick={handleNextPage}
-              disabled={currentPage === totalPages}
-            >
-              Next <FaGreaterThan />
-            </button>
+                    {items.driver_payment_status.toLowerCase() ===
+                      "pending" && (
+                      <button
+                        className="py-2 px-5 border hover:border-palette-primary-main border-b-gray-200 rounded-full text-palette-primary-main"
+                        onClick={() => handlePayDriver(items.id)}
+                      >
+                        Pay Driver
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    {session?.user?.role == "driver" ? (
+                      <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
+                        <button
+                          className="py-2 px-5 border hover:border-palette-primary-main border-b-gray-200 rounded-full text-palette-primary-main"
+                          onClick={() => handlePickOrder(items.id)}
+                          disabled={
+                            items?.order_status_farmer?.toLowerCase() !==
+                            "accepted"
+                          }
+                        >
+                          Pick Order
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
+                        <button className="py-2 px-5 border border-b-gray-200 rounded-full text-[#FFBB38]">
+                          Pending
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="w-full flex justify-center items-center mt-4">
+            <div className="flex justify-center items-center p-4">
+              <button
+                className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+              >
+                <FaLessThan /> Previous
+              </button>
+              <div>{renderPageButtons()}</div>
+              <button
+                className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+              >
+                Next <FaGreaterThan />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex item-center justify-center mt-16">
+          <Loader />;
+        </div>
+      )}
     </div>
   );
 };

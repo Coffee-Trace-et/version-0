@@ -13,6 +13,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
+import Loader from "@/app/(DashboardLayout)/components/Loder/Loder";
 
 interface Transaction {
   id: string;
@@ -44,7 +45,14 @@ interface RecentTransactionsProps {
   setTotalAmount: (earnings: number) => void;
 }
 
-const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactionsProps) => {
+const RecentTransactions = ({
+  setTotalEarnings,
+  setTotalAmount,
+}: RecentTransactionsProps) => {
+  /////////////////////////////////
+  // const [loading, setLoading] = useState<boolean>(false);
+  /////////////////////////////////
+
   const [allPage, setAllPage] = useState(1);
   const [allData, setAllData] = useState<Transaction[]>();
   const [loading, setLoading] = useState(false);
@@ -54,6 +62,7 @@ const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactions
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       const res = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/transaction/getmytransactions",
         {
@@ -73,16 +82,16 @@ const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactions
         data.data?.forEach((transaction: any) => {
           const date = new Date(transaction.datetime);
           const transactionMonth = date.getMonth() + 1; // Get month (1-12)
-            
-          
-            if (transaction.amount > 0) {
-              earnings.push(transaction.amount);
-              quntity.push(transaction.quantity);
+
+          if (transaction.amount > 0) {
+            earnings.push(transaction.amount);
+            quntity.push(transaction.quantity);
           }
         });
         setAllData(data.data);
         setTotalEarnings(earnings?.reduce((a, b) => a + b, 0));
         setTotalAmount(quntity?.reduce((a, b) => a + b, 0));
+        setLoading(false);
       }
     };
 
@@ -177,10 +186,12 @@ const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactions
               <TableRow key={transaction.id}>
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <MdOutlineShoppingBag
+                    <MdOutlineShoppingBag
                       style={{ fontSize: "24px", marginRight: "8px" }}
                     />
-                    <Typography variant="subtitle2">{transaction.id}</Typography>
+                    <Typography variant="subtitle2">
+                      {transaction.id}
+                    </Typography>
                   </Box>
                 </TableCell>
                 <TableCell>
@@ -194,12 +205,12 @@ const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactions
                   </Typography>
                 </TableCell>
                 <TableCell>
-                  <Typography variant="h6">{transaction.quantity} kg</Typography>
+                  <Typography variant="h6">
+                    {transaction.quantity} kg
+                  </Typography>
                 </TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">
-                    ${transaction.amount} k
-                  </Typography>
+                  <Typography variant="h6">${transaction.amount} k</Typography>
                 </TableCell>
                 <TableCell align="right">
                   <Typography variant="h6">
@@ -211,35 +222,41 @@ const RecentTransactions = ({setTotalEarnings,setTotalAmount}:RecentTransactions
           </TableBody>
         </Table>
       </Box>
-      <div className="w-full flex justify-center items-center mt-4">
-        <div className="flex justify-center items-center p-4">
-          <button
-            className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
-            onClick={handlePrevPage}
-          >
-            <FaLessThan /> Previous
-          </button>
-          {Array.from({ length: totalAllPages }, (_, i) => (
+      {!(loading || session.status === "loading") ? (
+        <div className="w-full flex justify-center items-center mt-4">
+          <div className="flex justify-center items-center p-4">
             <button
-              key={i}
-              onClick={() => handlePageClick(i + 1)}
-              className={`py-2 px-3 sm:px-4 md:py-2 rounded-xl mx-1 ${
-                i + 1 === allPage
-                  ? "bg-palette-primary-main text-white"
-                  : "bg-white text-palette-primary-main border border-primary.main"
-              }`}
+              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
+              onClick={handlePrevPage}
             >
-              {i + 1}
+              <FaLessThan /> Previous
             </button>
-          ))}
-          <button
-            className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
-            onClick={handleNextPage}
-          >
-            Next <FaGreaterThan />
-          </button>
+            {Array.from({ length: totalAllPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => handlePageClick(i + 1)}
+                className={`py-2 px-3 sm:px-4 md:py-2 rounded-xl mx-1 ${
+                  i + 1 === allPage
+                    ? "bg-palette-primary-main text-white"
+                    : "bg-white text-palette-primary-main border border-primary.main"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              className="cursor-pointer text-sm text-palette-primary-main flex items-center gap-1 px-4 py-1"
+              onClick={handleNextPage}
+            >
+              Next <FaGreaterThan />
+            </button>
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex item-center justify-center mt-10">
+          <Loader />;
+        </div>
+      )}
     </div>
   );
 };

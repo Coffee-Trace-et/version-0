@@ -56,6 +56,15 @@ const Menuitems = [
     role: "admin",
     type: "",
   },
+  {
+    id: uniqueId(),
+    title: "Products",
+    icon: FaPeopleCarryBox,
+    href: "/Admin/Products",
+    role: "admin",
+    type: "",
+  },
+  
 
   {
     id: uniqueId(),

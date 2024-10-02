@@ -11,13 +11,7 @@ import { useSession } from "next-auth/react";
 import { Product } from "@/utils/types/types";
 import OrderProduct from "../../components/product/OrderProduct";
 
-import Loader from "../../components/Loder/Loder";
-
 const Page = () => {
-  // loader
-
-  const [curLoading, setCurLoading] = useState<boolean>(false);
-
   const [value, setValue] = useState<number[]>([20, 37]);
   const [rating, setRating] = useState<number | null>(2);
   const [open, setOpen] = useState<boolean>(false);
@@ -33,7 +27,6 @@ const Page = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      setCurLoading(true);
       try {
         const response = await fetch(
           "https://cofeetracebackend-2.onrender.com/api/v0/product/getall",
@@ -48,7 +41,6 @@ const Page = () => {
         setProducts(data.products);
         setFilteredProducts(data.products); // Initially, display all products
         console.log("Products fetched:", data.products);
-        setCurLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -90,7 +82,7 @@ const Page = () => {
       const matchesLocation =
         !selectedLocation || product.origin === selectedLocation;
       const matchesPrice =
-        Number(product.price) >= value[0] && Number(product.price) <= value[1];
+        product.price >= value[0] && product.price <= value[1];
       const matchesRating = rating === null || product.rating >= rating;
 
       return matchesType && matchesLocation && matchesPrice && matchesRating;
@@ -116,14 +108,6 @@ const Page = () => {
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
-  if (curLoading || status === "loading") {
-    return (
-      <div className="flex item-center justify-center h-screen">
-        <Loader />;
-      </div>
-    );
-  }
-  //////////////////
   return (
     <div className="flex gap-5 w-full relative">
       <div className="hidden sm:block sm:w-1/3 lg:w-1/4 border-2 py-4 px-2">
@@ -256,9 +240,7 @@ const Page = () => {
             >
               <RiCloseLine />
             </div>
-            {selectedProductForOrder && (
-              <OrderProduct product={selectedProductForOrder} />
-            )}
+            <OrderProduct product={selectedProductForOrder} />
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
@@ -266,7 +248,6 @@ const Page = () => {
             <div
               key={index}
               className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
-              onClick={() => handleAddProduct(product)}
             >
               {parseInt(product.quantity, 10) > 0 && (
                 <ProductCard

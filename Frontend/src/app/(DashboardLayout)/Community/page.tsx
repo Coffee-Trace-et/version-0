@@ -10,7 +10,10 @@ import AddBlog from "../components/community/AddBlog";
 import { useSession } from "next-auth/react";
 import { BiSend } from "react-icons/bi";
 import ItemReplay from "../components/community/replay";
-import { reverse } from "lodash";
+import AllBlogs from "../components/community/allBlogs";
+import { divide, reverse } from "lodash";
+import AllResource from "../components/community/AllResource";
+import AddResource from "../components/community/AddResource";
 
 interface Discription {
   description: string;
@@ -57,7 +60,6 @@ const ItemDescription = ({ description }: Discription) => {
   );
 };
 
-// const ItemReplay = ({ id }: ItemsReplay) => {
 //   const session = useSession();
 //   const [isExpanded, setIsExpanded] = useState(true);
 //   const [replay, setReplay] = useState<Replay[]>();
@@ -208,46 +210,6 @@ const Page = () => {
       tag: "System-update",
     },
   ];
-  // const blog = [
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     createdAt: "2 day ago",
-  //   },
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     views: "875",
-  //     createdAt: "2 day ago",
-  //   },
-  //   {
-  //     author: {
-  //       name: "Abebe Kebede",
-  //       image: "image url",
-  //     },
-  //     title: "How to Improve coffee production",
-  //     discription:
-  //       "To improve coffee production, farmers can adopt sustainable practices, enhance soil health, diversify crop varieties, conserve water, use technology for precision farming, optimize post-harvest handling, and build direct trade relationships for better market access and profitability.",
-  //     tags: ["coffee improvment", "Study-Group"],
-  //     replies: "28",
-  //     views: "875",
-  //     createdAt: "2 day ago",
-  //   },
-  // ];
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -277,24 +239,31 @@ const Page = () => {
       <div className="w-full  relative lg:w-3/5 flex gap-10 flex-col">
         <div className=" w-full sticky flex justify-between items-center shadow-md p-2">
           <div className=" flex gap-10">
-            <div className="flex items-center text-xl gap-3">
+            <div
+              className="flex items-center text-xl gap-3"
+              onClick={() => setActiveTab("discussion")}
+            >
               <LuMessageSquare />
               <h1>Discussion</h1>
             </div>
-            <div className="flex items-center text-xl gap-3">
+
+            <div
+              className="flex items-center text-xl gap-3"
+              onClick={() => setActiveTab("resource")}
+            >
               <FaPaperclip />
               <h1>Resource</h1>
             </div>
           </div>
           <div>
-            {session?.data?.user?.role === "farmer" && (
+            {/* {session?.data?.user?.role === "farmer" && ( */}
               <button
                 className="px-6 py-2 border-2 border-gray-200  bg-[#A67B5B]  text-white rounded-md outline-none text-center "
                 onClick={handleAddPost}
               >
                 Post
               </button>
-            )}
+            {/* )} */}
           </div>
         </div>
 
@@ -307,7 +276,7 @@ const Page = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-5">
                   <Image
-                    src={items?.image}
+                    src={items?.image || "/images/profile/user-2.svg"}
                     alt={items.name}
                     width={48}
                     height={48}
@@ -398,7 +367,10 @@ const Page = () => {
           >
             <RiCloseLine />
           </div>
-          <AddBlog setOpen={setOpen} />
+          {
+            activeTab === "discussion" ? <AddBlog setOpen={setOpen} /> : <AddResource setOpen={setOpen} />
+          }
+          {/* <AddBlog setOpen={setOpen} /> */}
         </div>
       )}
     </div>
