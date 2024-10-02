@@ -9,12 +9,12 @@ interface SettingInputType {
   email: string;
   password: string;
   role: string;
-  phoneNumber: string;
+  phone_number: string;
   address: string;
   image: string;
-  orderConfirmation: boolean;
-  orderStatusConfirmation: boolean;
-  emailNotification: boolean;
+  order_confirmation: boolean;
+  order_status: boolean;
+  email_notification: boolean;
 }
 
 const UserSettingsPage = () => {
@@ -39,6 +39,7 @@ const UserSettingsPage = () => {
           }
 
           const data = await response.json(); // Parse the response data
+          console.log("herrrrrrrrrrrrrrrrrrrrr",data.user)
           setUser(data.user); // Set the user state
         } catch (error) {
           console.error("Error fetching user data:", error);

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 import { RiCloseLine } from "react-icons/ri";
 import AddProduct from "./addProduct";
+import { useSession } from "next-auth/react";
 
 interface ProductCardType {
   image: string;
@@ -14,6 +15,8 @@ interface ProductCardType {
 }
 
 const Product = ({ ...item }: ProductCardType) => {
+  const session = useSession();
+
   return (
     <div className="w-full">
       <img
@@ -21,7 +24,7 @@ const Product = ({ ...item }: ProductCardType) => {
         alt="Coffee image"
         width={40}
         height={40}
-        className="w-[97%] h-44 object-cover rounded-md"
+        className="w-[97%] h-44 object-cover "
       />
       <div className="text-[#939393] font-semibold text-sm py-4">
         {item.name}
@@ -37,6 +40,18 @@ const Product = ({ ...item }: ProductCardType) => {
           <p>{item.rating}</p>
         </div>
       </div>
+      {session.data?.user.role.toLowerCase() === "admin" && (
+        <div className="w-full flex justify-between mt-4 ">
+          <div className="flex gap-4">
+            <button className=" bg-gray-200 w-[94px] h-[32px] text-gray-500 rounded-md hover:bg-gray-600 hover:text-white">
+              Warn
+            </button>
+            <button className=" bg-red-500 w-[94px] h-[32px] text-white rounded-md hover:bg-red-600">
+              Delete
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
