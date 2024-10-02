@@ -10,7 +10,7 @@ import { RiCloseLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
 import { BiSend } from "react-icons/bi";
 // import ItemReplay from "../components/community/replay";
-import { reverse } from "lodash";
+import { indexOf, reverse } from "lodash";
 
 interface Discription {
   description: string;
@@ -57,7 +57,7 @@ const ItemDescription = ({ description }: Discription) => {
   );
 };
 
-const page = () => {
+const Page = () => {
   const [activeTab, setActiveTab] = useState("discussion");
   const [open, setOpen] = useState<boolean>(false);
   const [blog, setBlog] = useState<Blog[]>();
@@ -155,7 +155,7 @@ const page = () => {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-5">
                   <Image
-                    src={items?.image}
+                    src={items?.image || "/images/profile/user-2.svg"}
                     alt={items.name}
                     width={48}
                     height={48}
@@ -180,7 +180,10 @@ const page = () => {
               </div>
               <div className="flex gap-6">
                 {items.tags.map((tag, index) => (
-                  <button className="px-5 py-2 rounded-full  bg-[#cdcdcd23]">
+                  <button
+                    key={index}
+                    className="px-5 py-2 rounded-full  bg-[#cdcdcd23]"
+                  >
                     {tag}
                   </button>
                 ))}
@@ -272,4 +275,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
