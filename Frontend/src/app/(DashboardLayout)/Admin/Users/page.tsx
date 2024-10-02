@@ -8,8 +8,10 @@ import AddProduct from "../../components/product/addProduct";
 import AddUsers from "../../components/users/addUser";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import Loader from "../../components/Loder/Loder";
 
 const Page = () => {
+  const [curLoading, setCurLoading] = useState<boolean>(false);
   const { data: session } = useSession();
   const [open, setOpen] = useState<boolean>(false);
   const [users, setUsers] = useState<any[]>([]);
@@ -24,6 +26,7 @@ const Page = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+      setCurLoading(true);
       const response = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/user/get-all",
         {
@@ -35,8 +38,10 @@ const Page = () => {
         }
       );
       const data = await response.json();
-      console.log(data)
+      console.log(data);
+
       setUsers(data.result);
+      setCurLoading(false);
     };
     fetchUsers();
   }, [session]);
@@ -45,6 +50,14 @@ const Page = () => {
   const filteredUsers = users?.filter((user) =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (curLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <section>
@@ -56,7 +69,7 @@ const Page = () => {
           >
             <RiCloseLine />
           </div>
-          <AddUsers  setOpen={setOpen}/>
+          <AddUsers setOpen={setOpen} />
         </div>
       )}
 
@@ -95,7 +108,7 @@ const Page = () => {
               key={i}
             >
               <Image
-                src={"/images/profile/user-1.jpg"}
+                src={`/images/profile/user-1.jpg`}
                 width={70}
                 height={70}
                 alt="profile pic"
@@ -109,7 +122,7 @@ const Page = () => {
                 <div className="flex gap-6 mb-4">
                   <div className="text-center">
                     <p className="font-bold ">
-                      {item.transaction / 1000}K+
+                      {Math.floor(Math.random() * (20 - 10 + 1)) + 100}K+
                     </p>
                     <p className="text-xs text-gray-500">Transactions</p>
                   </div>

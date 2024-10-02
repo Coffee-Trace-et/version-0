@@ -74,7 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       session.user = token.user as User; // Attach the user object to the session
-      session.accessToken = token.user?.accessToken; // Optionally pass the access token
+      session.accessToken = (token.user as User)?.accessToken; // Optionally pass the access token
       return session;
     },
   },

@@ -359,9 +359,7 @@ const Page = () => {
           </div>
 
           <div>
-            <RecentTransactions
-              destinations={OnGoingDelivery[0].curDestinations}
-            />
+            <RecentTransactions id={OnGoingDelivery[0].curDestinations} />
           </div>
         </div>
       </div>
@@ -622,9 +620,7 @@ const Page = () => {
             </div>
 
             <div>
-              <RecentTransactions
-                destinations={OnGoingDelivery[0].curDestinations}
-              />
+              <RecentTransactions id={OnGoingDelivery[0]?.curDestinations} />
             </div>
           </div>
         )}

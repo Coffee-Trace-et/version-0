@@ -82,7 +82,7 @@ const Page = () => {
       const matchesLocation =
         !selectedLocation || product.origin === selectedLocation;
       const matchesPrice =
-        product.price >= value[0] && product.price <= value[1];
+        Number(product.price) >= value[0] && Number(product.price) <= value[1];
       const matchesRating = rating === null || product.rating >= rating;
 
       return matchesType && matchesLocation && matchesPrice && matchesRating;
@@ -240,7 +240,9 @@ const Page = () => {
             >
               <RiCloseLine />
             </div>
-            <OrderProduct product={selectedProductForOrder} />
+            {selectedProductForOrder && (
+              <OrderProduct product={selectedProductForOrder} />
+            )}
           </div>
         )}
         <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">

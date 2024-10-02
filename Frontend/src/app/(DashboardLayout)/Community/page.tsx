@@ -60,7 +60,6 @@ const ItemDescription = ({ description }: Discription) => {
   );
 };
 
-// const ItemReplay = ({ id }: ItemsReplay) => {
 //   const session = useSession();
 //   const [isExpanded, setIsExpanded] = useState(true);
 //   const [replay, setReplay] = useState<Replay[]>();
@@ -172,7 +171,7 @@ const ItemDescription = ({ description }: Discription) => {
 //   );
 // };
 
-const page = () => {
+const Page = () => {
   const [activeTab, setActiveTab] = useState("discussion");
   const [open, setOpen] = useState<boolean>(false);
   const [blog, setBlog] = useState<Blog[]>();
@@ -211,6 +210,7 @@ const page = () => {
       tag: "System-update",
     },
   ];
+
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -267,9 +267,49 @@ const page = () => {
           </div>
         </div>
 
-          {
-            activeTab === 'discussion' ? <AllBlogs/> :<AllResource/>
-          }
+        <div className="flex flex-col gap-8 overflow-hidden overflow-y-scroll max-h-[100dvh]">
+          {blog?.reverse().map((items, index) => (
+            <div
+              key={index}
+              className="flex flex-col p-4 border-2 rounded-md gap-4 "
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-5">
+                  <Image
+                    src={items?.image}
+                    alt={items.name}
+                    width={48}
+                    height={48}
+                    className="rounded-full bg-violet-50"
+                  />
+                  {/* <p>By: {items.author.name}</p> */}
+                  <p>By: {items.name}</p>
+                </div>
+                <p>{new Date(items.created_at).toDateString()}</p>
+              </div>
+              <div className="text-lg font-semibold text-[#6D6F7B]">
+                {items.title}
+              </div>
+              <div className="text-[#6D6F7B]">
+                <ItemDescription description={items.description} />
+              </div>
+              <div className="flex gap-6">
+                {items.tags.map((tag, index) => (
+                  <button
+                    key={index}
+                    className="px-5 py-2 rounded-full  bg-[#cdcdcd23]"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+              <div className="flex w-full">
+                <div className="flex gap-3 items-center"></div>
+                <ItemReplay id={items.id} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       <div className="hidden relative lg:w-[30%] md:flex gap-10 flex-col">
         <div className=" flex flex-col gap-2 border-2 p-4 rounded-3xl shadow-md">
@@ -308,7 +348,10 @@ const page = () => {
           <div>
             <div className="flex flex-wrap gap-4 ">
               {sugestion.map((items, index) => (
-                <button className="px-5 py-2 rounded-full  bg-[#cdcdcd23]">
+                <button
+                  key={index}
+                  className="px-5 py-2 rounded-full  bg-[#cdcdcd23]"
+                >
                   {items.tag}
                 </button>
               ))}
@@ -334,4 +377,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

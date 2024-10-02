@@ -31,9 +31,9 @@ const Profile = () => {
         className="flex items-center gap-3 cursor-pointer"
       >
         <img
-          src="/images/profile/user-1.jpg"
+          src="/images/profile/user-3.svg"
           alt="User"
-          className="w-12 h-12 rounded-full sm:rounded-lg"
+          className="w-12 h-12 rounded-md "
         />
         <div className="hidden sm:flex gap-4 py-1 items-center">
           <div className="flex-col items-start">
