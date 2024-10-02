@@ -8,9 +8,13 @@ import { Slider } from "@mui/material";
 import { FaPlus } from "react-icons/fa";
 import { RiCloseLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
-import {Product} from "@/utils/types/types"
+import { Product } from "@/utils/types/types";
+
+import Loader from "../../components/Loder/Loder";
 
 const Page = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [value, setValue] = useState<number[]>([0, 100000]);
   const [rating, setRating] = useState<number | null>(0);
   const [open, setOpen] = useState<boolean>(false);
@@ -22,10 +26,10 @@ const Page = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { data: session, status } = useSession();
 
-  
   // Fetch products from the API
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
         const response = await fetch(
           "https://cofeetracebackend-2.onrender.com/api/v0/product/getall",
@@ -39,6 +43,7 @@ const Page = () => {
         const data = await response.json();
         setProducts(data.products);
         setFilteredProducts(data.products); // Initially, display all products
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -73,9 +78,13 @@ const Page = () => {
 
   const handleApplyFilters = () => {
     const filtered = products.filter((product) => {
-      const matchesType = selectedTypes.length === 0 || selectedTypes.includes(product.origin);
-      const matchesLocation = !selectedLocation || product.origin === selectedLocation;
-      const matchesPrice = parseFloat(product.price) >= value[0] && parseFloat(product.price) <= value[1];
+      const matchesType =
+        selectedTypes.length === 0 || selectedTypes.includes(product.origin);
+      const matchesLocation =
+        !selectedLocation || product.origin === selectedLocation;
+      const matchesPrice =
+        parseFloat(product.price) >= value[0] &&
+        parseFloat(product.price) <= value[1];
       const matchesRating = rating === null || product.rating >= rating;
 
       return matchesType && matchesLocation && matchesPrice && matchesRating;
@@ -161,14 +170,18 @@ const Page = () => {
               placeholder="Min"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[0]}
-              onChange={(e) => handleChange(e as any, [Number(e.target.value), value[1]])}
+              onChange={(e) =>
+                handleChange(e as any, [Number(e.target.value), value[1]])
+              }
             />
             <input
               type="text"
               placeholder="Max"
               className="border-2 py-2 text-center px-4 w-1/4 rounded-md"
               value={value[1]}
-              onChange={(e) => handleChange(e as any, [value[0], Number(e.target.value)])}
+              onChange={(e) =>
+                handleChange(e as any, [value[0], Number(e.target.value)])
+              }
             />
           </div>
 
@@ -212,53 +225,59 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="w-full sm:w-4/5 overflow-hidden overflow-y-scroll max-h-[100dvh]">
-        <div className="hidden  sm:flex justify-end w-full py-4">
-          <button
-            className="border-2 py-2 px-5 rounded-md font-bold text-lg text-white bg-palette-primary-main focus:border-black"
-            onClick={handleAddProduct}
-          >
-            Post Your Product
-          </button>
-        </div>
-        <div className="sm:hidden w-full flex gap-3 items-center justify-center mb-6">
-          <input
-            type="text"
-            placeholder="Search shipment..."
-            className="w-4/5 p-4 border rounded-md focus:outline-none focus:border-blue-500"
-          />
-          <div className=" text-center  text-white p-4 rounded-full bg-palette-primary-main">
-            <FaPlus onClick={handleAddProduct} />
+      {!(loading || status === "loading") ? (
+        <div className="w-full sm:w-4/5 overflow-hidden overflow-y-scroll max-h-[100dvh]">
+          <div className="hidden  sm:flex justify-end w-full py-4">
+            <button
+              className="border-2 py-2 px-5 rounded-md font-bold text-lg text-white bg-palette-primary-main focus:border-black"
+              onClick={handleAddProduct}
+            >
+              Post Your Product
+            </button>
+          </div>
+          <div className="sm:hidden w-full flex gap-3 items-center justify-center mb-6">
+            <input
+              type="text"
+              placeholder="Search shipment..."
+              className="w-4/5 p-4 border rounded-md focus:outline-none focus:border-blue-500"
+            />
+            <div className=" text-center  text-white p-4 rounded-full bg-palette-primary-main">
+              <FaPlus onClick={handleAddProduct} />
+            </div>
+          </div>
+          {open && (
+            <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
+              <div
+                className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
+                onClick={handleCloseAddProduct}
+              >
+                <RiCloseLine />
+              </div>
+              <AddProduct setOpen={setOpen} />
+            </div>
+          )}
+          <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
+            {filteredProducts?.map((product, index) => (
+              <div
+                key={index}
+                className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
+              >
+                <ProductCard
+                  image={product.image_url || ""}
+                  name={product.product_name}
+                  price={`$${product.price}`}
+                  amount={`${product.quantity} kg`}
+                  rating={product.rating.toFixed(1)}
+                />
+              </div>
+            ))}
           </div>
         </div>
-        {open && (
-          <div className="fixed inset-0 z-50  flex items-center justify-center bg-[#00000057] ">
-            <div
-              className=" absolute top-5 right-5 border-2 p-2 text-2xl text-white rounded-full "
-              onClick={handleCloseAddProduct}
-            >
-              <RiCloseLine />
-            </div>
-            <AddProduct setOpen={setOpen} />
-          </div>
-        )}
-        <div className="flex gap-5 flex-wrap justify-center sm:justify-between overflow-y-auto">
-          {filteredProducts?.map((product, index) => (
-            <div
-              key={index}
-              className="sm:w-[45%] lg:w-[29%] w-full flex flex-col gap-3 p-4 items-center rounded-lg border-2 cursor-pointer"
-            >
-              <ProductCard
-                image={product.image_url || ""}
-                name={product.product_name}
-                price={`$${product.price}`}
-                amount={`${product.quantity} kg`}
-                rating={product.rating.toFixed(1)}
-              />
-            </div>
-          ))}
+      ) : (
+        <div className="flex item-center justify-center mt-10 ml-10">
+          <Loader />;
         </div>
-      </div>
+      )}
     </div>
   );
 };

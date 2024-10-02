@@ -10,9 +10,11 @@ import {
 } from "react-icons/fa"; // Added check and times icons
 import { TbMoneybag } from "react-icons/tb";
 import { useSession } from "next-auth/react";
+import Loader from "@/app/(DashboardLayout)/components/Loder/Loder";
 
 const PendingOrder = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState<boolean>(true);
   // const pending = [
   //   {
   //     icon: <TbMoneybag />,
@@ -56,6 +58,7 @@ const PendingOrder = () => {
 
   useEffect(() => {
     const fetchPendingOrder = async () => {
+      setLoading(true);
       const response = await fetch(
         "https://cofeetracebackend-2.onrender.com/api/v0/order/getmyorders",
         {
@@ -92,6 +95,7 @@ const PendingOrder = () => {
 
       console.log("teklu", data);
       setPendingOrder(data);
+      setLoading(false);
     };
     fetchPendingOrder();
   }, [session]);
@@ -207,108 +211,114 @@ const PendingOrder = () => {
         Pending Orders
       </h1>
 
-      <div className="flex flex-col gap-5 w-full">
-        <div className=" flex flex-col gap-6 w-full">
-          {getPagedData().map((items: any, index: number) => (
-            <div
-              key={index}
-              className="flex flex-col gap-7 md:flex-row md:gap-4  py-4 px-5 border border-gray-200 rounded-xl shadow-md"
-            >
-              <div className="flex items-center gap-4 w-full md:w-1/4">
-                <div
-                  className={`text-3xl ${
-                    items?.bg || "bg-lime-200"
-                  } rounded-2xl p-3 md:p-4`}
-                >
-                  {items?.icon || <TbMoneybag />}
+      {!(loading || status === "loading") ? (
+        <div className="flex flex-col gap-5 w-full">
+          <div className=" flex flex-col gap-6 w-full">
+            {getPagedData().map((items: any, index: number) => (
+              <div
+                key={index}
+                className="flex flex-col gap-7 md:flex-row md:gap-4  py-4 px-5 border border-gray-200 rounded-xl shadow-md"
+              >
+                <div className="flex items-center gap-4 w-full md:w-1/4">
+                  <div
+                    className={`text-3xl ${
+                      items?.bg || "bg-lime-200"
+                    } rounded-2xl p-3 md:p-4`}
+                  >
+                    {items?.icon || <TbMoneybag />}
+                  </div>
+                  <div className="flex flex-col capitalize text-lg">
+                    <p>{items.farmer_name}</p>
+                    <p className="text-sm text-[#718EBF]">{items.order_type}</p>
+                  </div>
                 </div>
-                <div className="flex flex-col capitalize text-lg">
-                  <p>{items.farmer_name}</p>
-                  <p className="text-sm text-[#718EBF]">{items.order_type}</p>
-                </div>
-              </div>
 
-              <div className="flex gap-4 md:w-3/5">
-                {session?.user?.role !== "driver" ? (
+                <div className="flex gap-4 md:w-3/5">
+                  {session?.user?.role !== "driver" ? (
+                    <div className="flex items-center gap-4 w-full md:w-1/3">
+                      <div className="flex flex-col text-lg font-semibold">
+                        <p>Type</p>
+                        <p className="text-sm text-[#718EBF]">
+                          {items.order_type}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-4 w-full md:w-1/3">
+                      <div className="flex flex-col text-lg font-semibold">
+                        <p>Start</p>
+                        <p className="text-sm text-[#718EBF]">
+                          {items.start_location}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {session?.user?.role === "driver" && (
+                    <div className="flex items-center gap-4 w-full md:w-1/3">
+                      <div className="flex flex-col text-lg font-semibold">
+                        <p>Destination</p>
+                        <p className="text-sm text-[#718EBF]">
+                          {items.end_location}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center gap-4 w-full md:w-1/3">
                     <div className="flex flex-col text-lg font-semibold">
-                      <p>Type</p>
-                      <p className="text-sm text-[#718EBF]">
-                        {items.order_type}
-                      </p>
+                      <p>Quantity</p>
+                      <p className="text-sm text-[#718EBF]">{items.quantity}</p>
                     </div>
+                  </div>
+                  {session?.user?.role !== "driver" && (
+                    <div className="flex items-center gap-4 w-full md:w-1/3">
+                      <div className="flex flex-col text-lg font-semibold">
+                        <p>Shipping Coverage</p>
+                        <p className="text-sm text-[#718EBF]">
+                          {items.shipping_coverage}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {session?.user?.role != "merchant" ? (
+                  <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
+                    <button
+                      className="py-2 px-5 border border-b-gray-200 rounded-full text-green-600"
+                      onClick={
+                        session?.user?.role === "farmer"
+                          ? () => handleAcceptFarmer(items.id)
+                          : () => handleAcceptDriver(items.id)
+                      }
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="py-2 px-5 border border-b-gray-200 rounded-full text-red-600"
+                      onClick={
+                        session?.user?.role === "farmer"
+                          ? () => handleRjectFarmer(items.id)
+                          : () => handleRjectDriver(items.id)
+                      }
+                    >
+                      Reject
+                    </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-4 w-full md:w-1/3">
-                    <div className="flex flex-col text-lg font-semibold">
-                      <p>Start</p>
-                      <p className="text-sm text-[#718EBF]">
-                        {items.start_location}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                {session?.user?.role === "driver" && (
-                  <div className="flex items-center gap-4 w-full md:w-1/3">
-                    <div className="flex flex-col text-lg font-semibold">
-                      <p>Destination</p>
-                      <p className="text-sm text-[#718EBF]">
-                        {items.end_location}
-                      </p>
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center gap-4 w-full md:w-1/3">
-                  <div className="flex flex-col text-lg font-semibold">
-                    <p>Quantity</p>
-                    <p className="text-sm text-[#718EBF]">{items.quantity}</p>
-                  </div>
-                </div>
-                {session?.user?.role !== "driver" && (
-                  <div className="flex items-center gap-4 w-full md:w-1/3">
-                    <div className="flex flex-col text-lg font-semibold">
-                      <p>Shipping Coverage</p>
-                      <p className="text-sm text-[#718EBF]">
-                        {items.shipping_coverage}
-                      </p>
-                    </div>
+                  <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
+                    <button className="py-2 px-5 border border-b-gray-200 rounded-full text-[#FFBB38]">
+                      Pending
+                    </button>
                   </div>
                 )}
               </div>
-              {session?.user?.role != "merchant" ? (
-                <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
-                  <button
-                    className="py-2 px-5 border border-b-gray-200 rounded-full text-green-600"
-                    onClick={
-                      session?.user?.role === "farmer"
-                        ? () => handleAcceptFarmer(items.id)
-                        : () => handleAcceptDriver(items.id)
-                    }
-                  >
-                    Approve
-                  </button>
-                  <button
-                    className="py-2 px-5 border border-b-gray-200 rounded-full text-red-600"
-                    onClick={
-                      session?.user?.role === "farmer"
-                        ? () => handleRjectFarmer(items.id)
-                        : () => handleRjectDriver(items.id)
-                    }
-                  >
-                    Reject
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-4 w-full md:w-1/5">
-                  <button className="py-2 px-5 border border-b-gray-200 rounded-full text-[#FFBB38]">
-                    Pending
-                  </button>
-                </div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="flex item-center justify-center mt-10">
+          <Loader />;
+        </div>
+      )}
       <div className="w-full flex justify-center items-center mt-4">
         <div className="flex justify-center items-center p-4">
           <button
